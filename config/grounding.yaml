@@ -9,10 +9,27 @@
 
 negation:
   before: [kein, keine, keinen, keiner, keines, nicht, ohne, nie, weder, verneint, ausgeschlossen]
-  after: [negativ, negative, nicht, entfällt, ausgeschlossen, verneint, saniert, sanierung, beendet, abgesetzt]
+  after: [negativ, negative, nicht, entfällt, ausgeschlossen, verneint, saniert, sanierung, beendet, abgesetzt, entfernt, gezogen, explantiert]
   window: 4
   # a cue followed by one of these negates that word, not what comes after ("gehen nicht möglich, transfer mit ...")
-  closers: [möglich, erforderlich, nötig, notwendig, vorhanden, bekannt, gegeben, mehr]
+  closers: [möglich, erforderlich, nötig, notwendig, vorhanden, bekannt, gegeben]
+  # a predicate at the end of the clause negates its subject however far away it is ("eine Weglauftendenz wird von
+  # Tochter und Ehemann klar verneint", "eine Vorsorgevollmacht liegt trotz Nachfrage nicht vor")
+  predicate_after:
+    - '\bnicht\s+(mehr\s+)?(vor|erforderlich|notwendig|nötig|indiziert|gegeben|vorhanden|bekannt)\b'
+    - '(?<!nicht )\b(verneint|ausgeschlossen)\b'
+    - '\b(entfernt|gezogen|explantiert|beendet|abgesetzt)\b'
+  # these say something is not needed, not that it does not exist: "eine Betreuung ist daher nicht erforderlich"
+  # negates the option but does not mean "keine" for the field
+  need: [erforderlich, notwendig, nötig, indiziert]
+
+# A clause that only considers, proposes, applies for or refuses something does not state it for the patient now.
+# For the fields in plan_fields the plan is the value (the care being arranged, the planned discharge date, a Pflegegrad
+# applied for), so only the uncertain cues apply there.
+modality:
+  uncertain: ['nicht ausgeschlossen', '\berwogen\b', 'in erwägung', '\beventuell\b', '\bevtl\.?', '\bggf\.?', '\bfalls\b', '\balternativ\b', '\bfraglich\b', '\bverdacht auf\b', '\bv\.\s?a\.']
+  planned: ['\bangeregt\b', '\bbeantragt\b', '\bantrag\b', '\bangefragt\b', 'vorgeschlagen', '\bgeplant\b', '\bvorgesehen\b', 'wird vorbereitet', '\blehnt\b.*\bab\b', '\babgelehnt\b', '\bsteht aus\b', '\bausstehend\b']
+  plan_fields: [care_type, discharge_date, pflegegrad]
   # a clause that resolves an earlier positive ("nach Sanierung negativ") reads as negation of the concept
 spoken_numbers: {eins: 1, zwei: 2, drei: 3, vier: 4, fünf: 5}
 
@@ -43,6 +60,9 @@ fields:
       orientiert: ['(?<!des)orientiert', 'kognitiv unauffällig']
       leicht_eingeschraenkt: ['leichte[nr]? kognitive', 'kognitiv leicht', 'teilweise desorientiert', 'leicht eingeschränkt']
       demenz: ['demenz', '\bdement']
+    # orientation to some qualities only is not "orientiert"
+    option_exclude:
+      orientiert: ['(?<!und )zur person orientiert', '\bnur\b.{0,20}orientiert', 'teilweise orientiert', '(zeitlich|örtlich|situativ) (nicht |un)orientiert']
   runaway_risk:
     concept: ['weglauftendenz', 'hinlauftendenz', 'umherwander', 'beschützte[nrm]? (bereich|station|wohnbereich)']
   oxygen:
@@ -93,9 +113,9 @@ fields:
 # Sentences that are not about the patient as they are now: a relative as the subject, or a past condition ("Z.n.").
 # They do not support a value; a quote from one is "unsupported". Deliberately narrow (sentence start only).
 not_about_patient:
-  - '^\s*(der|die|ihr|sein|seine|ihre)\s+(ehemann|ehefrau|ehepartner\w*|lebensgefährt\w*|tochter|sohn|schwester|bruder|mutter|vater|enkel\w*)\b'
-  - '^\s*z\.\s?n\.'
-  - '^\s*(zustand nach|anamnestisch)\b'
+  - '^\s*([\wäöü]+\s*:\s*)?(der|die|ihr|sein|seine|ihre)\s+(ehemann|ehefrau|ehepartner\w*|lebensgefährt\w*|tochter|sohn|schwester|bruder|mutter|vater|enkel\w*)\b'
+  - '^\s*([\wäöü]+\s*:\s*)?z\.\s?n\.'
+  - '^\s*([\wäöü]+\s*:\s*)?(zustand nach|anamnestisch)\b'
 
 # A later statement about a field that supports a different value makes the earlier one stale; the verifier marks
 # the field "conflict" and shows both. Statements in the same document are ordered by position.

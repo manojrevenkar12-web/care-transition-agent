@@ -92,7 +92,7 @@ def main(argv: list[str] | None = None) -> int:
     r.add_argument("action", choices=["purge"])
     r.add_argument("--tenant", required=True)
     h = sub.add_parser("heldout")
-    h.add_argument("action", choices=["run", "rescore"])
+    h.add_argument("action", choices=["run", "rescore", "score"])
     h.add_argument("--reason", default="")
     h.add_argument("--set", required=True)
     h.add_argument("--local-stack", action="store_true")
@@ -145,6 +145,8 @@ def main(argv: list[str] | None = None) -> int:
                 if not a.reason:
                     raise SystemExit("--reason is required: say what was wrong with the scorer")
                 res = heldout.rescore(a.set, gw, a.reason)
+            elif a.action == "score":
+                res = heldout.score(a.set, gw)
             else:
                 res = heldout.run(a.set, gw)
         _print(

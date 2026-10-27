@@ -153,6 +153,12 @@ class Verifier:
         self.neg_after = [re.compile(rf"^{p}$") for p in lex["negation"]["after"]]
         self.window = int(lex["negation"]["window"])
         self.closers = set(lex["negation"].get("closers", []))
+        self.predicate_after = [re.compile(p) for p in lex["negation"].get("predicate_after", [])]
+        self.need = set(lex["negation"].get("need", []))
+        mod = lex.get("modality", {})
+        self.uncertain = [re.compile(p) for p in mod.get("uncertain", [])]
+        self.planned = [re.compile(p) for p in mod.get("planned", [])]
+        self.plan_fields = set(mod.get("plan_fields", []))
         self.spoken = {k: int(v) for k, v in lex["spoken_numbers"].items()}
         self.fields: dict[str, dict[str, Any]] = {}
         for fid, spec in lex["fields"].items():
@@ -162,6 +168,7 @@ class Verifier:
             c["false"] = [re.compile(p) for p in spec.get("false_patterns", [])]
             c["none"] = [re.compile(p) for p in spec.get("none_patterns", [])]
             c["context"] = [re.compile(p) for p in spec.get("text_context", [])]
+            c["exclude"] = {k: [re.compile(p) for p in v] for k, v in (spec.get("option_exclude") or {}).items()}
             self.fields[fid] = c
         self.conflict_check = bool(lex.get("conflict_check", True))
         self.not_about = [re.compile(p) for p in lex.get("not_about_patient", [])]
@@ -171,18 +178,39 @@ class Verifier:
 
     # ---- reading a clause ---------------------------------------------------------------------------------------
     def _negated(self, clause: str, start: int, end: int) -> bool:
+        return self._negation(clause, start, end) is not None
+
+    def _negation(self, clause: str, start: int, end: int) -> str | None:
+        """None, "exists" (it is not there) or "need" (it is not needed)."""
         before = [(m.start(), m.group(0).strip(".")) for m in _TOKEN.finditer(clause[:start])][-self.window :]
-        after = [(m.start() + end, m.group(0).strip(".")) for m in _TOKEN.finditer(clause[end:])][: self.window]
+        after = [(m.start() + end, m.group(0).strip(".")) for m in _TOKEN.finditer(clause[end:])]
         for i, (pos, tok) in enumerate(before):
-            nxt = before[i + 1][1] if i + 1 < len(before) else ""
-            if nxt in self.closers:
+            following = [t for _, t in before[i + 1 : i + 3]]
+            if any(t in self.closers for t in following):
                 continue
             if any(r.match(tok) for r in self.neg_before) and not self._blocked(clause[pos:start]):
-                return True
-        for pos, tok in after:
+                return "exists"
+        for k, (pos, tok) in enumerate(after[: self.window]):
             if any(r.match(tok) for r in self.neg_after) and not self._blocked(clause[end:pos]):
-                return True
-        return False
+                nxt = after[k + 1][1] if k + 1 < len(after) else ""
+                return "need" if nxt in self.need else "exists"
+        rest = clause[end:]
+        for r in self.predicate_after:
+            for m in r.finditer(rest):
+                if not self._blocked(rest[: m.start()]):
+                    return "need" if any(w in m.group(0) for w in self.need) else "exists"
+        return None
+
+    def _modal(self, field_id: str, clause: str) -> bool:
+        """The clause only considers, plans, applies for or refuses something."""
+        if any(r.search(clause) for r in self.uncertain):
+            return True
+        return field_id not in self.plan_fields and any(r.search(clause) for r in self.planned)
+
+    @staticmethod
+    def _unparen(sentence: str) -> str:
+        """Parentheses are asides, not clause breaks: keep their words, drop their commas."""
+        return re.sub(r"\(([^()]*)\)", lambda m: " " + m.group(1).replace(",", " ").replace(";", " ") + " ", sentence)
 
     def _blocked(self, gap: str) -> bool:
         """Another field's concept between a negation cue and this concept ends the cue's scope."""
@@ -190,7 +218,7 @@ class Verifier:
 
     @staticmethod
     def _clauses(sentence: str) -> list[str]:
-        parts = [p for p in _CLAUSE.split(sentence.lower()) if p.strip()]
+        parts = [p for p in _CLAUSE.split(Verifier._unparen(sentence.lower())) if p.strip()]
         return parts or [sentence.lower()]
 
     def _concept_polarity(self, pats: list[re.Pattern[str]], clause: str) -> set[bool]:
@@ -207,6 +235,8 @@ class Verifier:
             return {}
         out: dict[Any, bool] = {}
         for clause in self._clauses(sentence):
+            if self._modal(f.id, clause):
+                continue
             if spec["special"] == "pflegegrad":
                 out.update(self._pflegegrad(clause))
                 continue
@@ -229,16 +259,22 @@ class Verifier:
             if f.type == "enum":
                 matched_option = False
                 for opt, pats in spec["options"].items():
+                    if any(x.search(clause) for x in spec["exclude"].get(opt, [])):
+                        continue
                     for r in pats:
                         for m in r.finditer(clause):
                             matched_option = True
-                            neg = self._negated(clause, m.start(), m.end())
-                            out[opt] = out.get(opt, True) and not neg
-                            if neg and "keine" in f.options:
+                            neg = self._negation(clause, m.start(), m.end())
+                            out[opt] = out.get(opt, True) and neg is None
+                            if neg == "exists" and "keine" in f.options:
                                 out["keine"] = True
                 if "keine" in f.options and spec["concept"]:
-                    pol = self._concept_polarity(spec["concept"], clause)
-                    if False in pol and not any(v for k, v in out.items() if k != "keine"):
+                    exists_negated = any(
+                        self._negation(clause, m.start(), m.end()) == "exists"
+                        for r in spec["concept"]
+                        for m in r.finditer(clause)
+                    )
+                    if exists_negated and not any(v for k, v in out.items() if k != "keine"):
                         out["keine"] = True
                 if "keine" in f.options and any(r.search(clause) for r in spec["none"]):
                     out["keine"] = True

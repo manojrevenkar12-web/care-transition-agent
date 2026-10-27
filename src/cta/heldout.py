@@ -198,6 +198,24 @@ def rescore(set_name: str, gw: Gateway, reason: str) -> dict[str, Any]:
     return result
 
 
+def score(set_name: str, gw: Gateway) -> dict[str, Any]:
+    """Score a regression set (one whose failures have been studied) without recording anything. Refuses a set that
+    is still held out: looking at its results before its first run is recorded would end its blindness."""
+    d = config.root() / "heldout" / set_name
+    status = (d / "STATUS").read_text().strip() if (d / "STATUS").exists() else "held-out"
+    if status != "regression":
+        raise SystemExit(
+            f"{set_name} is {status}: only regression sets can be scored freely; use `run` for its first run"
+        )
+    return {
+        "set": set_name,
+        "status": status,
+        "pii": run_pii(_read(d / "pii.jsonl"), gw),
+        "grounding": run_grounding(_read(d / "grounding.jsonl")),
+        "guards": run_guards(_read(d / "guards.jsonl")),
+    }
+
+
 def run(set_name: str, gw: Gateway | None) -> dict[str, Any]:
     root = config.root()
     d = root / "heldout" / set_name

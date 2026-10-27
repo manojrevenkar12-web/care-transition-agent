@@ -19,6 +19,7 @@ import (
 	"sort"
 	"strings"
 	"time"
+	"unicode"
 	"unicode/utf8"
 
 	"github.com/manojrevenkar12-web/care-transition-agent/gateway/internal/identity"
@@ -93,23 +94,28 @@ func New(id identity.Identity, surrogateKey []byte, ageCap int, now time.Time) *
 }
 
 var (
-	reExistingTag = regexp.MustCompile(`«[^»]{1,40}»`)
-	nameWord      = `[A-ZÄÖÜ][a-zäöüß]+(?:-[A-ZÄÖÜ][a-zäöüß]+)?`
-	nameRe        = `(?:[A-ZÄÖÜ]\.\s?)?` + nameWord + `(?:\s+(?:von|van|de|zu|von der)\s+` + nameWord + `)?`
-	reTitled      = regexp.MustCompile(`(?:\b(?:Herrn?|Frau|Hr\.|Fr\.)\s+(?:(?:Dr\.|Prof\.)\s+)?(?:med\.\s+)?)(` + nameRe + `(?:\s+` + nameWord + `)?)`)
-	reDoctor      = regexp.MustCompile(`(?:\b(?:Dr|Prof)\.(?:\s?(?:med|rer\.\s?nat|phil|h\.\s?c)\.)?\s+)(` + nameRe + `(?:\s+` + nameWord + `)?)`)
-	reRelational  = regexp.MustCompile(`\b(?:Sohn|Tochter|Ehemann|Ehefrau|Ehepartner(?:in)?|Lebensgefährt(?:e|in)|Enkel(?:in)?|Bruder|Schwester|Nichte|Neffe|Schwiegersohn|Schwiegertochter|Betreuer(?:in)?|Bevollmächtigte[rn]?|Nachbar(?:in)?|Ansprechpartner(?:in)?)\s*[:,]?\s+(` + nameWord + `(?:\s+` + nameWord + `)?)`)
-	reKVNR        = regexp.MustCompile(`\b[A-Z][0-9]{9}\b`)
-	reKVNRLabel   = regexp.MustCompile(`(?i)(?:KVNR|Versichertennr\.?|Versichertennummer|Vers\.-Nr\.?)\s*:?\s*([A-Z][0-9]{9})`)
-	reIBAN        = regexp.MustCompile(`\b[A-Z]{2}\d{2}(?:\s?[0-9A-Z]{4}){3,7}(?:\s?[0-9A-Z]{1,4})?\b`)
-	reEmail       = regexp.MustCompile(`[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}`)
-	rePhoneLabel  = regexp.MustCompile(`(?i)(?:tel\.?|telefon(?:nummer)?|mobil|handy|fon|rückruf(?:nummer)?)\s*(?:nr\.?)?\s*:?\s*(\+?[0-9][0-9 ()/-]{5,}[0-9])`)
-	rePhoneIntl   = regexp.MustCompile(`\+49[0-9 ()/-]{7,}[0-9]`)
-	rePhoneLocal  = regexp.MustCompile(`\b0[1-9][0-9]{1,4}[ /-][0-9]{3,}(?:[ -][0-9]+)*\b`)
-	reStreet      = regexp.MustCompile(`\b[A-ZÄÖÜ][a-zäöüß]+(?:[ -][A-ZÄÖÜ][a-zäöüß]+)*(?:straße|strasse|str\.|weg|allee|platz|ring|gasse|damm|ufer|chaussee)\s+\d{1,4}\s?[a-zA-Z]?\b`)
-	rePostalCity  = regexp.MustCompile(`\b(\d{5})\s+[A-ZÄÖÜ][a-zäöüß]+`)
-	reCaseNumber  = regexp.MustCompile(`(?i)(?:Fall(?:nummer|-?nr\.?)|Aufnahme(?:nummer|-?nr\.?)|Patienten-?(?:ID|nr\.?)|Pat\.-?(?:ID|Nr\.?))\s*:?\s*([A-Z0-9][A-Z0-9-]{4,})`)
-	reBirthLabel  = regexp.MustCompile(`(?i)(?:geb\.?(?:\s*am)?|geboren(?:\s*am)?|Geburtsdatum|\*)\s*:?\s*(\d{1,2}\.\s?\d{1,2}\.\s?\d{2,4})`)
+	reExistingTag  = regexp.MustCompile(`«[^»]{1,40}»`)
+	nameWord       = `[A-ZÄÖÜ][a-zäöüß]+(?:-[A-ZÄÖÜ][a-zäöüß]+)?`
+	nameRe         = `(?:[A-ZÄÖÜ]\.\s?)?` + nameWord + `(?:\s+(?:von|van|de|zu|von der)\s+` + nameWord + `)?`
+	reTitled       = regexp.MustCompile(`(?:\b(?:Herrn?|Frau|Hr\.|Fr\.)\s+(?:(?:Dr\.|Prof\.)\s+)?(?:med\.\s+)?)(` + nameRe + `(?:\s+` + nameWord + `)?)`)
+	reDoctor       = regexp.MustCompile(`(?:\b(?:Dr|Prof)\.(?:\s?(?:med|rer\.\s?nat|phil|h\.\s?c)\.)?\s+)(` + nameRe + `(?:\s+` + nameWord + `)?)`)
+	reRelational   = regexp.MustCompile(`\b(?:Sohn|Tochter|Ehemann|Ehefrau|Ehepartner(?:in)?|Lebensgefährt(?:e|in)|Enkel(?:in)?|Bruder|Schwester|Nichte|Neffe|Schwiegersohn|Schwiegertochter|Betreuer(?:in)?|Bevollmächtigte[rn]?|Nachbar(?:in)?|Ansprechpartner(?:in)?)\s*[:,]?\s+(` + nameWord + `(?:\s+` + nameWord + `)?)`)
+	reKVNR         = regexp.MustCompile(`\b[A-Z][0-9]{9}\b`)
+	reKVNRLabel    = regexp.MustCompile(`(?i)(?:KVNR|Versichertennr\.?|Versichertennummer|Vers\.-Nr\.?)\s*:?\s*([A-Z][0-9]{9})`)
+	reIBAN         = regexp.MustCompile(`\b[A-Z]{2}\d{2}(?:\s?[0-9A-Z]{4}){3,7}(?:\s?[0-9A-Z]{1,4})?\b`)
+	reEmail        = regexp.MustCompile(`[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}`)
+	rePhoneLabel   = regexp.MustCompile(`(?i)(?:tel\.?|telefon(?:nummer)?|mobil|handy|fon|rückruf(?:nummer)?)\s*(?:nr\.?)?\s*:?\s*(\+?[0-9][0-9 ()/-]{5,}[0-9])`)
+	rePhoneIntl    = regexp.MustCompile(`\+[1-9][0-9]{0,2}[0-9 ()/-]{6,}[0-9]`)
+	rePhoneLocal   = regexp.MustCompile(`\b0[1-9][0-9]{1,4}[ /-][0-9]{3,}(?:[ -][0-9]+)*\b`)
+	reStreet       = regexp.MustCompile(`\b[A-ZÄÖÜ][a-zäöüß]+(?:[ -][A-ZÄÖÜ][a-zäöüß]+)*(?:straße|strasse|str\.|weg|allee|platz|ring|gasse|damm|ufer|chaussee)\s+\d{1,4}\s?[a-zA-Z]?\b`)
+	rePostalCity   = regexp.MustCompile(`\b(\d{5})\s+[A-ZÄÖÜ][a-zäöüß]+`)
+	reCaseNumber   = regexp.MustCompile(`(?i)(?:Fall(?:nummer|-?nr\.?)|Aufnahme(?:nummer|-?nr\.?)|Patienten-?(?:ID|nr\.?)|Pat\.-?(?:ID|Nr\.?))\s*:?\s*([A-Z0-9][A-Z0-9-]{4,})`)
+	reFallLabel    = regexp.MustCompile(`(?i)\b(?:Fall|Vorfall|Voraufenthalt|Aufnahme)\s*(?:-?Nr\.?|nummer)?\s*:?\s+([0-9][0-9/ -]{4,}[0-9])`)
+	reCaseYear     = regexp.MustCompile(`\b(?:19|20)\d{2}[-/]\d{5,7}\b`)
+	reOtherID      = regexp.MustCompile(`(?i)(?:Reisepass\w*|Pass-?Nr\.?|Passnummer|Personalausweis\w*|Ausweis-?Nr\.?|Ausweisnummer|Az\.|Aktenzeichen|Geschäftszeichen|RV-?Nr\.?|Rentenversicherungsnummer|Sozialversicherungsnummer|SV-?Nr\.?)\s*(?:\(?Nr\.?\s*)?:?\s*([A-Z0-9][A-Z0-9 ./-]{4,18}[A-Z0-9])|\b([XVI]{1,6}\s+\d{1,5}/\d{2})\b|\b(\d{2}\s?\d{6}\s?[A-Z]\s?\d{3})\b`)
+	rePrefixStreet = regexp.MustCompile(`\b(?:Am|An der|An den|Auf dem|Auf der|Im|In der|In den|Zum|Zur|Hinter dem|Unter den|Alt)\s+([A-ZÄÖÜ][a-zäöüß]+)\s+\d{1,3}[a-z]?\b`)
+	reWord         = regexp.MustCompile(`[a-zäöüß]+`)
+	reBirthLabel   = regexp.MustCompile(`(?i)(?:geb\.?(?:\s*am)?|geboren(?:\s*am)?|Geburtsdatum|\*)\s*:?\s*(\d{1,2}\.\s?\d{1,2}\.\s?\d{2,4})`)
 )
 
 // words that follow a five-digit number without it being a postal code ("20000 Einheiten Heparin")
@@ -133,11 +139,29 @@ func (ps *Pseudonymizer) Pseudonymize(text string) Result {
 		spans = append(spans, span{start, end, kind, tag, prio})
 	}
 
-	// 1. known identifiers
+	// 1. known identifiers, searched in normalised views of the text (umlauts, diacritics, Cyrillic, OCR, line breaks)
+	views := []view{normView(text, foldExpand), normView(text, foldDrop)}
+	runs := digitRuns(text)
+	dictation := isDictation(text)
 	for _, pt := range ps.persons {
-		for _, v := range nameVariants(pt.p) {
-			for _, m := range findWord(text, v.text, true) {
-				add(m[0]+v.skip, m[1], "name", pt.tag, prioKnown)
+		for _, nv := range variantsOf(pt.p) {
+			for _, m := range findInView(views[nv.mode], nv.folded) {
+				if ps.acceptName(text, m[0], m[1], pt.p, nv, dictation) {
+					add(m[0], m[1], "name", pt.tag, prioKnown)
+				}
+			}
+		}
+	}
+	for _, re := range []*regexp.Regexp{reTitledInitials, reBareInitials} {
+		titled := re == reTitledInitials
+		for _, m := range re.FindAllStringSubmatchIndex(text, -1) {
+			raw := strings.TrimRight(text[m[2]:m[3]], " -")
+			ini := initialsOf(raw)
+			for _, pt := range ps.persons {
+				if pi := personInitials(pt.p); pi[ini] && (titled || len(ini) >= 2) {
+					add(m[2], m[2]+len(raw), "name", pt.tag, prioKnown)
+					break
+				}
 			}
 		}
 	}
@@ -145,41 +169,62 @@ func (ps *Pseudonymizer) Pseudonymize(text string) Result {
 	if bd, err := time.Parse("2006-01-02", ps.id.BirthDate); err == nil {
 		birthTag = ps.birthTag(bd)
 		for _, v := range dateVariants(bd) {
-			for _, m := range findWord(text, v, false) {
+			for _, m := range findInView(views[0], foldString(v, foldExpand)) {
 				add(m[0], m[1], "birth_date", birthTag, prioKnown)
 			}
 		}
+		for _, sd := range spokenDates(views[0]) {
+			if sd.day == bd.Day() && sd.month == int(bd.Month()) && (sd.year == bd.Year() || sd.twoDigitYear && sd.year == bd.Year()%100) {
+				add(sd.start, sd.end, "birth_date", birthTag, prioKnown)
+			}
+		}
 	}
-	if ps.id.KVNR != "" {
-		for _, m := range findWord(text, ps.id.KVNR, false) {
-			add(m[0], m[1], "kvnr", "«KVNR»", prioKnown)
+	if k := strings.ToUpper(ps.id.KVNR); len(k) == 10 {
+		for _, m := range findDigitsIn(runs, k[1:], false) {
+			add(kvnrStart(text, m[0], k[0]), m[1], "kvnr", "«KVNR»", prioKnown)
 		}
 	}
 	for _, c := range ps.id.CaseNumbers {
-		for _, m := range findWord(text, c, false) {
-			add(m[0], m[1], "case_number", "«Fallnummer»", prioKnown)
+		for _, want := range caseDigitVariants(c) {
+			for _, m := range findDigitsIn(runs, want, false) {
+				add(m[0], m[1], "case_number", "«Fallnummer»", prioKnown)
+			}
+		}
+		if d := digitsOnly(c); len(d) > 6 {
+			for _, m := range reFallLabel.FindAllStringSubmatchIndex(text, -1) {
+				if digitsOnly(text[m[2]:m[3]]) == d[len(d)-6:] {
+					add(m[2], m[3], "case_number", "«Fallnummer»", prioKnown)
+				}
+			}
 		}
 	}
 	for _, a := range ps.id.Addresses {
 		for _, v := range streetVariants(a.Street) {
-			for _, m := range findWord(text, v, false) {
+			for _, m := range findInView(views[0], foldString(v, foldExpand)) {
 				add(m[0], m[1], "address", "«Adresse»", prioKnown)
 			}
 		}
+		if name := streetName(a.Street); len([]rune(name)) >= 6 {
+			for _, m := range findInView(views[0], foldString(name, foldExpand)) {
+				add(m[0], houseNumberEnd(text, m[1]), "address", "«Adresse»", prioKnown)
+			}
+		}
 		if a.PostalCode != "" {
-			for _, m := range findWord(text, a.PostalCode, true) {
+			for _, m := range findDigitsIn(runs, a.PostalCode, true) {
 				add(m[0], m[1], "postal_code", "«PLZ»", prioKnown)
 			}
 		}
 	}
 	for _, e := range ps.id.Emails {
-		for _, m := range findWord(text, e, false) {
+		for _, m := range findInView(views[0], foldString(e, foldExpand)) {
 			add(m[0], m[1], "email", "«E-Mail»", prioKnown)
 		}
 	}
 	for _, ph := range ps.id.Phones {
-		for _, m := range findDigits(text, digitsOnly(ph)) {
-			add(m[0], m[1], "phone", "«Telefon»", prioKnown)
+		for _, want := range phoneDigitVariants(ph) {
+			for _, m := range findDigitsIn(runs, want, false) {
+				add(m[0], m[1], "phone", "«Telefon»", prioKnown)
+			}
 		}
 	}
 
@@ -202,12 +247,70 @@ func (ps *Pseudonymizer) Pseudonymize(text string) Result {
 			add(m[2], m[3], "phone", "«Telefon»", prioLabeled)
 		}
 	}
-	for i, re := range []*regexp.Regexp{reTitled, reDoctor, reRelational} {
+	for i, re := range []*regexp.Regexp{reTitled, reDoctor, reRelational, reSignoff} {
 		for _, m := range re.FindAllStringSubmatchIndex(text, -1) {
 			name, ok := trimName(strings.TrimSpace(text[m[2]:m[3]]), i == 2)
-			if ok {
+			if ok && !eponym(text, m[2], m[2]+len(name)) && plausibleName(strings.Fields(name)[0]) {
 				add(m[2], m[2]+len(name), "name", ps.nameTag(name), prioLabeled)
 			}
+		}
+	}
+	for _, m := range reOtherID.FindAllStringSubmatchIndex(text, -1) {
+		for g := 1; g <= 3; g++ {
+			if m[2*g] >= 0 {
+				add(m[2*g], m[2*g+1], "other", "«Kennnummer»", prioLabeled)
+			}
+		}
+	}
+	for _, m := range reFallLabel.FindAllStringSubmatchIndex(text, -1) {
+		if n := len(digitsOnly(text[m[2]:m[3]])); n >= 6 {
+			add(m[2], m[3], "case_number", "«Fallnummer»", prioLabeled)
+		}
+	}
+	for _, sd := range spokenDates(views[0]) {
+		if before := prevWords(text, sd.start, 2); len(before) > 0 && (before[0] == "geboren" || before[0] == "geb" || len(before) > 1 && before[1] == "geboren") {
+			tag := "«Geburtsdatum»"
+			if birthTag != "" {
+				tag = birthTag
+			}
+			add(sd.start, sd.end, "birth_date", tag, prioLabeled)
+		}
+	}
+	if dictation {
+		for _, m := range reLowerTitle.FindAllStringIndex(text, -1) {
+			words := reWord.FindAllStringIndex(text[m[1]:], 2)
+			if len(words) == 0 || strings.TrimSpace(text[m[1]:m[1]+words[0][0]]) != "" {
+				continue
+			}
+			s1, e1 := m[1]+words[0][0], m[1]+words[0][1]
+			w1 := text[s1:e1]
+			if notAName[w1] || commonWords[w1] && !givenNames[capitalise(w1)] || !plausibleName(w1) {
+				continue
+			}
+			end := e1
+			if len(words) == 2 && strings.TrimSpace(text[e1:m[1]+words[1][0]]) == "" && givenNames[capitalise(w1)] {
+				if w2 := text[m[1]+words[1][0] : m[1]+words[1][1]]; !notAName[w2] && plausibleName(w2) {
+					end = m[1] + words[1][1]
+				}
+			}
+			add(s1, end, "name", ps.nameTag(text[s1:end]), prioLabeled)
+		}
+		for _, m := range reWord.FindAllStringIndex(text, -1) {
+			w := text[m[0]:m[1]]
+			if givenNames[capitalise(w)] && !commonWords[w] && !notAName[w] && len(w) >= 4 {
+				add(m[0], m[1], "name", ps.nameTag(w), prioPattern)
+			}
+		}
+		for _, r := range runs {
+			if len(r.digits) >= 7 && r.spokenShare() > 0.5 {
+				add(r.spans[0][0], r.spans[len(r.spans)-1][1], "phone", "«Telefon»", prioPattern)
+			}
+		}
+	}
+	for _, m := range reGivenFamily.FindAllStringSubmatchIndex(text, -1) {
+		given, fam := text[m[2]:m[3]], text[m[4]:m[5]]
+		if givenNames[given] && !notAFamily[fam] && !givenNames[fam] && !commonWords[strings.ToLower(fam)] && !eponym(text, m[0], m[1]) {
+			add(m[2], m[5], "name", ps.nameTag(given+" "+fam), prioPattern)
 		}
 	}
 
@@ -224,6 +327,14 @@ func (ps *Pseudonymizer) Pseudonymize(text string) Result {
 	}
 	for _, m := range reEmail.FindAllStringIndex(text, -1) {
 		add(m[0], m[1], "email", "«E-Mail»", prioPattern)
+	}
+	for _, m := range reCaseYear.FindAllStringIndex(text, -1) {
+		add(m[0], m[1], "case_number", "«Fallnummer»", prioPattern)
+	}
+	for _, m := range rePrefixStreet.FindAllStringSubmatchIndex(text, -1) {
+		if !notStreet[text[m[2]:m[3]]] {
+			add(m[0], m[1], "address", "«Adresse»", prioPattern)
+		}
 	}
 	for _, re := range []*regexp.Regexp{rePhoneIntl, rePhoneLocal} {
 		for _, m := range re.FindAllStringIndex(text, -1) {
@@ -340,41 +451,6 @@ func init() {
 	}
 }
 
-var lowerTitles = []string{"frau ", "herr ", "herrn ", "patientin ", "patient ", "pat ", "pat. "}
-
-func nameVariants(p identity.Person) []variant {
-	g, f := strings.TrimSpace(p.Given), strings.TrimSpace(p.Family)
-	var full, single []string
-	if g != "" && f != "" {
-		full = append(full, g+" "+f, f+", "+g, g[:1]+". "+f, g[:1]+"."+f)
-	}
-	if f != "" {
-		single = append(single, f)
-		if strings.Contains(f, "-") {
-			single = append(single, strings.Split(f, "-")...)
-		}
-	}
-	if len([]rune(g)) >= 3 {
-		single = append(single, strings.Fields(g)...)
-	}
-	var out []variant
-	for _, v := range full {
-		out = append(out, variant{v, 0}, variant{strings.ToUpper(v), 0}, variant{strings.ToLower(v), 0}, variant{v + "s", 0})
-	}
-	for _, v := range single {
-		out = append(out, variant{v, 0}, variant{strings.ToUpper(v), 0}, variant{v + "s", 0})
-		low := strings.ToLower(v)
-		if !commonWords[low] {
-			out = append(out, variant{low, 0})
-			continue
-		}
-		for _, t := range lowerTitles {
-			out = append(out, variant{t + low, len(t)})
-		}
-	}
-	return out
-}
-
 func dateVariants(d time.Time) []string {
 	dd, mm, yyyy := d.Day(), int(d.Month()), d.Year()
 	yy := yyyy % 100
@@ -458,48 +534,65 @@ func findDigits(text, want string) [][2]int {
 }
 
 // Leaks reports which kinds of the case's known identifiers still appear in text (never the values themselves).
+//
+// It is deliberately not the replacer run again: a check that shares the replacer's blind spots cannot catch its
+// misses. It searches the normalised views without the context rules for distinctive names (at a word start, also as
+// part of a longer word), every digit run for the known numbers as substrings, and dates in every spelling, so a
+// document the replacer did not clean completely is refused rather than sent.
 func (ps *Pseudonymizer) Leaks(text string) []string {
 	found := map[string]bool{}
+	views := []view{normView(text, foldExpand), normView(text, foldDrop)}
+	runs := digitRuns(text)
 	for _, pt := range ps.persons {
-		for _, part := range namePartsForLeak(pt.p) {
-			if len(findWord(text, part, true)) > 0 {
+		for _, nv := range variantsOf(pt.p) {
+			for _, m := range findPrefixInView(views[nv.mode], nv.folded) {
+				if nv.common && !hasPersonContext(text, m[0], m[1], pt.p) || eponym(text, m[0], m[1]) {
+					continue
+				}
 				found["name"] = true
 			}
 		}
 	}
 	if bd, err := time.Parse("2006-01-02", ps.id.BirthDate); err == nil {
 		for _, v := range dateVariants(bd) {
-			if len(findWord(text, v, false)) > 0 {
+			if len(findInView(views[0], foldString(v, foldExpand))) > 0 {
+				found["birth_date"] = true
+			}
+		}
+		for _, sd := range spokenDates(views[0]) {
+			if sameBirthDate(sd, bd) {
 				found["birth_date"] = true
 			}
 		}
 	}
-	if ps.id.KVNR != "" && strings.Contains(strings.ToUpper(text), strings.ToUpper(ps.id.KVNR)) {
+	if k := strings.ToUpper(ps.id.KVNR); len(k) == 10 && len(findDigitsIn(runs, k[1:], false)) > 0 {
 		found["kvnr"] = true
 	}
 	for _, c := range ps.id.CaseNumbers {
-		if c != "" && len(findWord(text, c, false)) > 0 {
-			found["case_number"] = true
+		for _, want := range caseDigitVariants(c) {
+			if len(findDigitsIn(runs, want, false)) > 0 {
+				found["case_number"] = true
+			}
 		}
 	}
 	for _, a := range ps.id.Addresses {
-		for _, v := range streetVariants(a.Street) {
-			if len(findWord(text, v, false)) > 0 {
-				found["address"] = true
-			}
+		if name := streetName(a.Street); len([]rune(name)) >= 6 && len(findInView(views[0], foldString(name, foldExpand))) > 0 {
+			found["address"] = true
 		}
-		if a.PostalCode != "" && len(findWord(text, a.PostalCode, true)) > 0 {
+		if a.PostalCode != "" && len(findDigitsIn(runs, a.PostalCode, true)) > 0 {
 			found["postal_code"] = true
 		}
 	}
 	for _, e := range ps.id.Emails {
-		if e != "" && strings.Contains(strings.ToLower(text), strings.ToLower(e)) {
+		if e != "" && strings.Contains(views[0].s, foldString(e, foldExpand)) {
 			found["email"] = true
 		}
 	}
 	for _, ph := range ps.id.Phones {
-		if len(findDigits(text, digitsOnly(ph))) > 0 {
-			found["phone"] = true
+		for _, want := range phoneDigitVariants(ph) {
+			if len(findDigitsIn(runs, want, false)) > 0 {
+				found["phone"] = true
+			}
 		}
 	}
 	var out []string
@@ -510,24 +603,102 @@ func (ps *Pseudonymizer) Leaks(text string) []string {
 	return out
 }
 
-func namePartsForLeak(p identity.Person) []string {
-	var out []string
-	for _, s := range append(strings.Split(p.Family, "-"), strings.Fields(p.Given)...) {
-		s = strings.TrimSpace(s)
-		if len([]rune(s)) < 3 {
-			continue
+func sameBirthDate(sd spokenDate, bd time.Time) bool {
+	return sd.day == bd.Day() && sd.month == int(bd.Month()) && (sd.year == bd.Year() || sd.twoDigitYear && sd.year == bd.Year()%100)
+}
+
+// acceptName decides whether a match of a listed person's name is the person.
+func (ps *Pseudonymizer) acceptName(text string, start, end int, p identity.Person, nv nameVariant, dictation bool) bool {
+	if eponym(text, start, end) {
+		return false
+	}
+	if !nv.single {
+		return true
+	}
+	if nv.common {
+		return hasPersonContext(text, start, end, p)
+	}
+	r, _ := utf8.DecodeRuneInString(text[start:end])
+	if unicode.IsLower(r) {
+		return dictation || hasPersonContext(text, start, end, p)
+	}
+	return true
+}
+
+// kvnrStart extends a match of the KVNR's digits back over its letter ("E762019724", "k neun vier ...").
+func kvnrStart(text string, start int, letter byte) int {
+	i := start
+	for i > 0 && (text[i-1] == ' ' || text[i-1] == '-') && start-i < 2 {
+		i--
+	}
+	if i > 0 && (text[i-1]|0x20) == (letter|0x20) {
+		if i == 1 || !isWordRune(rune(text[i-2])) {
+			return i - 1
 		}
-		out = append(out, s, strings.ToUpper(s))
-		if low := strings.ToLower(s); !commonWords[low] {
-			out = append(out, low)
-		} else {
-			for _, t := range lowerTitles {
-				out = append(out, t+low)
-			}
-		}
+	}
+	return start
+}
+
+// caseDigitVariants: "2026-128834" is also written "26/128834".
+func caseDigitVariants(c string) []string {
+	d := digitsOnly(c)
+	if len(d) < 6 {
+		return nil
+	}
+	out := []string{d}
+	if len(d) >= 10 && (strings.HasPrefix(d, "19") || strings.HasPrefix(d, "20")) {
+		out = append(out, d[2:])
 	}
 	return out
 }
+
+// phoneDigitVariants: a German number with and without the country code.
+func phoneDigitVariants(ph string) []string {
+	d := digitsOnly(ph)
+	if len(d) < 6 {
+		return nil
+	}
+	out := []string{d}
+	if strings.HasPrefix(d, "0") && !strings.HasPrefix(d, "00") {
+		out = append(out, "49"+d[1:])
+	}
+	if strings.HasPrefix(d, "49") {
+		out = append(out, "0"+d[2:])
+	}
+	return out
+}
+
+var (
+	reHouseNumber = regexp.MustCompile(`\s*\d+\s?[a-zA-Z]?\b`)
+	reHouseDigits = regexp.MustCompile(`^\s+\d{1,4}\s?[a-zA-Z]?\b`)
+	reHouseWord   = regexp.MustCompile(`^\s+([a-zäöüß]+)`)
+)
+
+// streetName is the street without its house number.
+func streetName(street string) string {
+	return strings.TrimSpace(reHouseNumber.ReplaceAllString(strings.TrimSpace(street), ""))
+}
+
+// houseNumberEnd extends a street name over a following house number in digits or words ("hofmarkstraße elf").
+func houseNumberEnd(text string, end int) int {
+	rest := text[end:]
+	if m := reHouseDigits.FindStringIndex(rest); m != nil {
+		return end + m[1]
+	}
+	if m := reHouseWord.FindStringSubmatchIndex(rest); m != nil {
+		if n, ok := parseNumberWord(foldString(rest[m[2]:m[3]], foldExpand)); ok && n > 0 && n < 1000 {
+			return end + m[1]
+		}
+	}
+	return end
+}
+
+// words that follow "Am"/"Im" without being a street ("Im Zimmer 12", "Am Montag 14")
+var notStreet = map[string]bool{"Zimmer": true, "Bett": true, "Raum": true, "Saal": true, "Bereich": true, "Haus": true,
+	"Gebäude": true, "Flur": true, "Stock": true, "Montag": true, "Dienstag": true, "Mittwoch": true, "Donnerstag": true,
+	"Freitag": true, "Samstag": true, "Sonntag": true, "Januar": true, "Februar": true, "März": true, "April": true,
+	"Mai": true, "Juni": true, "Juli": true, "August": true, "September": true, "Oktober": true, "November": true,
+	"Dezember": true, "Jahr": true, "Alter": true, "Schnitt": true, "Verlauf": true, "Rahmen": true, "Durchschnitt": true}
 
 var reTag = regexp.MustCompile(`«([^»]{1,40})»`)
 

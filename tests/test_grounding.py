@@ -113,3 +113,44 @@ def test_negation_does_not_leak_across_clauses() -> None:
     d = Doc("x", "arztbrief", "2026-10-12T08:00:00", "Kein Sauerstoffbedarf, Hämodialyse dreimal wöchentlich.")
     assert V.verify("dialysis", True, ev("x", "Hämodialyse dreimal wöchentlich"), [d]).status == "grounded"
     assert V.verify("oxygen", False, ev("x", "Kein Sauerstoffbedarf"), [d]).status == "grounded"
+
+
+# Added after held-out set v1 was studied (v1 is now a regression set); own examples, not v1's.
+def _verdict(field: str, value: object, text: str, quote: str, later: str = "") -> str:
+    docs = [Doc("a", "pflege", "2026-10-05T08:00:00", text)]
+    if later:
+        docs.append(Doc("b", "pflege", "2026-10-11T08:00:00", later))
+    return V.verify(field, value, [{"doc_id": "a", "quote": quote}], docs, {}).status
+
+
+def test_a_predicate_at_the_end_of_the_clause_negates_its_subject() -> None:
+    text = "Eine Hinlauftendenz wird von der Bezugspflege und den Angehörigen übereinstimmend verneint."
+    assert _verdict("runaway_risk", True, text, "Eine Hinlauftendenz wird") == "contradicted"
+    text = "Eine Dialyse ist nach Rücksprache mit der Nephrologie derzeit nicht erforderlich."
+    assert _verdict("dialysis", True, text, "Eine Dialyse ist nach Rücksprache") == "contradicted"
+
+
+def test_plans_and_proposals_do_not_state_the_value() -> None:
+    text = "Eine PEG-Anlage wurde besprochen und vorgeschlagen, die Entscheidung der Familie steht aus."
+    assert _verdict("peg_tube", True, text, "Eine PEG-Anlage wurde besprochen") == "unsupported"
+    text = "Verdacht auf beginnende Demenz, Abklärung ambulant."
+    assert _verdict("cognition", "demenz", text, "beginnende Demenz") == "unsupported"
+
+
+def test_removal_makes_an_earlier_statement_stale() -> None:
+    v = _verdict(
+        "urinary_catheter",
+        True,
+        "Suprapubischer Katheter liegt.",
+        "Suprapubischer Katheter liegt",
+        "Katheter heute entfernt, Miktion spontan.",
+    )
+    assert v == "conflict"
+
+
+def test_partial_orientation_is_not_oriented() -> None:
+    text = "Bekannte Demenz."
+    assert (
+        _verdict("cognition", "demenz", text, "Bekannte Demenz", "Heute nur zur Person orientiert, zeitlich nicht.")
+        == "grounded"
+    )

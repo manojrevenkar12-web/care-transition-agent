@@ -1,34 +1,82 @@
-# Deterministic guardrails around the agent (src/cta/guardrails.py). Patterns are regular expressions on lower-cased text.
+# Deterministic guardrails around the agent (src/cta/guardrails.py). Patterns are regular expressions on lower-cased
+# text, evaluated per sentence. They are a flag and a filter, not the defence: documents are always data to the model,
+# evidence from a flagged sentence is rejected by the verifier, and nothing leaves without a clinician's release.
 
-# Text in a document that is addressed to an AI is data, never an instruction: it is shown to the model inside the
-# document as usual, flagged, and evidence taken from it is rejected by the verifier.
+# Text in a document that is addressed to an AI. A sentence is flagged when it matches `always`, or when it names an
+# automated reader (`audience`) and tells it what to do (`directive`). Ordinary clinical uses of "System", "ignoriert"
+# or "Anweisung" match neither.
 injection:
-  - '(hinweis|anweisung|nachricht|notiz|info)\s+(für|an)\s+(die|das|den)?\s*(ki|ai|assistenz\w*|modell|system|chatbot|sprachmodell)'
-  - '^\s*(system|assistant|assistent)\s*:'
-  - '(ignorier|vergiss)\w*\s+(alle\s+)?(bisherigen|vorherigen|obigen|anderen)'
-  - 'ignore\s+(all\s+)?(previous|prior|above)'
-  - 'du\s+bist\s+(jetzt|ab\s+sofort|nun)'
-  - 'keine\s+rückfragen\s+stellen'
-  - '(immer|stets)\s+\w+\s+(angeben|eintragen)'
+  always:
+    - '^\s*(\[|<!--\s*)?(system|assistant|assistent|developer)\s*(\]|:)'
+    - '<!--.*\b(assistant|ai|ki|model|modell)\b'
+    - '(ignorier|vergiss|missachte)\w*\s+(\w+\s+){0,3}(bisherigen|vorherigen|obigen|anderen|vorigen)\s+(\w+\s+)?(regeln|vorgaben|anweisungen|angaben|instruktionen)'
+    - '\b(ignore|disregard|forget|override)\b\s+(\w+\s+){0,3}(previous|prior|above|earlier|safety|system)\b'
+    - '\b(vorrang|priorität)\s+vor\s+(\w+\s+){0,4}(systemvorgaben|anweisungen|vorgaben|regeln)'
+    - '\b(systemprompt|system prompt|systemvorgaben|deine vorgaben|your instructions)\b'
+    - 'du\s+bist\s+(jetzt|ab\s+sofort|nun)\b'
+    - '\byou are now\b'
+  audience:
+    - '\b(ki|ai|künstliche intelligenz|artificial intelligence|sprachmodell|language model|llm|chatbot|gpt)\b'
+    - '\b(assistenzsystem|überleitungsassistent\w*|digitale[nrm]? assistent\w*|ki-assistent\w*|ai assistant|assistant)\b'
+    - '\b(automatisiert\w*|maschinell\w*|elektronisch\w*)\s+\w*(programm|system|software|auswert|lese|verarbeit|übernahme|erfassung)\w*'
+    - '\b\w*(auswerte|auswertungs|lese|auslese|erfassungs)(programm|software|system)\w*\b'
+    - '\bper\s+(ki|software|programm)\b'
+    - '\b(hinweis|anweisung|nachricht|notiz|info|anmerkung)\s+(für|an)\s+(die|das|den)?\s*(ki|ai|assistenz\w*|modell|system|chatbot|sprachmodell|software)'
+  directive:
+    - '\b(trage|tragen|eintragen|setze|setzen|fülle|befülle\w*|befüllen|schreib\w*|übernimm|übernehmen|bewerte|antworte|gib|lass\w*|weglassen|streiche|markiere)\b'
+    - '\b(soll|sollen|muss|müssen|darf|dürfen)\b.*\b(nicht\s+)?(erwähn\w*|schreiben|angeben|eintragen|ausgeben|übernehmen|weglassen)\b'
+    - '\b(immer|stets|ausschließlich|nur noch)\b'
+    - '\b(do not|don''t|never|always|must|should|treat|send|output|write|set|mark|report)\b'
+    - '\b(keine|ohne)\s+(rück|nach)fragen\b'
+    - '\bungeprüft\b'
 
 # The agent's intended purpose is administrative: it drafts a transfer profile and answers questions about what the
-# documents say. Questions that ask for a clinical decision are out of scope (see docs/INTENDED_PURPOSE.md).
+# documents say. A question is out of scope when it asks for a clinical decision (dose, diagnosis, treatment, prognosis):
+# it matches `decision`, or it matches `maybe` and does not ask what the documents say (`report`).
 out_of_scope:
-  - '\b(dosis|dosierung|dosieren)\b'
-  - 'wie\s*viel\s+\w*\s*(mg|milligramm|einheiten|ml)\b'
-  - '\b\d+\s?(mg|µg|ie)\b.*\?'
-  - '(soll|sollte|sollen|müssen)\s+(ich|wir|man)\b.{0,60}\b(geben|verabreichen|absetzen|erhöhen|reduzieren|behandeln|operieren|verordnen|umstellen)'
-  - '\b(diagnose|diagnostizier\w*)\b.{0,30}\b(stellen|bestimmen|vermuten|wahrscheinlich)'
-  - '\b(prognose|lebenserwartung|überlebens\w*)\b'
-  - '\b(therapie|behandlung)\w*\s*(empfehl\w*|vorschlag|vorschlagen)'
-  - 'welche[sn]?\s+(medikament|antibiotikum|therapie)'
+  decision:
+    - '\b(dosis|dosierung|dosieren)\b.*\b(soll|sollte|geben|erhöhen|reduzieren|anpassen|nehmen|empfehl\w*)'
+    - '\bwie\s*viel\b.*\b(soll|sollte|muss|müssen|geben|spritzen|nehmen)\b'
+    - '\b(soll|sollte|sollen|müssen|muss|darf|dürfen|kann|können)\s+(ich|wir|man|sie|er|die patientin|der patient|der pflegedienst|die einrichtung)\b.{0,80}\b(geben|verabreichen|absetzen|pausieren|erhöhen|reduzieren|behandeln|operieren|verordnen|umstellen|wechseln|ziehen|spritzen|nehmen|machen|ansetzen|anlegen|entfernen|raus)\b'
+    - '\b(welche|was für eine)\s+diagnose\b'
+    - '\b(diagnose|diagnostizier\w*)\b.{0,30}\b(stellen|bestimmen|vermuten|wahrscheinlich|passt)\b'
+    - '\b(prognose|lebenserwartung|überlebens\w*)\b'
+    - '\bwie\s+lange\b.{0,40}\b(zu\s+leben|leben|überleben)\b'
+    - '\b(therapie|behandlung)\w*\s*(empfehl\w*|vorschlag|vorschlagen)'
+    - '\bwelche[sn]?\s+(antibiotikum|therapie|behandlung)\b.{0,40}\b(am besten|sollte|soll|empfehl\w*|nehmen|geben)\b'
+    - '\b(was meinen sie|ihre einschätzung|was denken sie|was halten sie)\b'
+    - '\beher\b.{1,60}\boder\b.{0,30}\?'
+    - '\b(braucht|benötigt)\s+(sie|er|die patientin|der patient)\s+(ein|eine|einen)\s+(antibiotikum|operation|chemo\w*|bluttransfusion|therapie|medikament)'
+    - '\b(lohnt|lohnen)\s+sich\b'
+    - '\bchemotherapie\b.{0,40}\boder\b'
+  maybe:
+    - '\b(soll|sollte|sollten|müssen|darf|dürfen)\b'
+    - '\b(dosis|dosierung)\b'
+    - '\bwelche[sn]?\s+(medikament|antibiotikum|therapie)'
+  report:
+    - '\b(steht|stehen|laut|dokumentiert|vermerkt|notiert|genannt|aufgeführt|erwähnt)\b'
+    - '\b(im|in dem|aus dem|im letzten)\s+(entlass|arzt|pflege|konsil)\w*(brief|bericht|bogen)?\b'
+    - '\bwas\s+(steht|sagt|sagen)\b'
+    - '\bwurde\b.{0,40}\b(verordnet|gegeben|angesetzt|abgesetzt|dokumentiert)\b'
 
-# Model output that gives clinical advice is held back for review, not shown as an answer.
+# Model output that gives clinical advice is held back, not shown as an answer. A sentence is advice when it matches
+# `advice` and is not attributed to the documents (`report`). A dose that the documents state is reporting.
 clinical_advice:
-  - '\b(wir\s+)?empfehlen\b'
-  - '\bsollte\b.{0,50}\b(erhalten|bekommen|gegeben|verabreicht|abgesetzt|behandelt)\b'
-  - '\b\d+([.,]\d+)?\s?(mg|µg|ie)\b'
-  - '\b(dosis|dosierung)\b'
+  advice:
+    - '\b(ich|wir)\s+(empfehle\w*|rate\w*|würde\w*)\b'
+    - '\bempfehle(n)?\b(?!.*\b(laut|steht|dokumentiert)\b)'
+    - '\b(sinnvoll|ratsam|angezeigt|indiziert)\s+(wäre|ist|sind|wären)\b'
+    - '\b(wäre|ist|sind)\s+(\w+\s+){0,3}(sinnvoll|ratsam|angezeigt)\b'
+    - '\bsollte[n]?\b.{0,60}\b(erhalten|bekommen|gegeben|verabreicht|abgesetzt|behandelt|versorgt|gezogen|gewechselt|erhöht|reduziert|pausiert|angesetzt|werden)\b'
+    - '\b(sie|man)\s+(können|kann|sollten|sollte|müssen)\b.{0,60}\b(pausieren|absetzen|geben|erhöhen|reduzieren|ziehen|ansetzen|wechseln|verabreichen|weglassen)\b'
+    - '\bkann\b.{0,60}\b(gezogen|abgesetzt|pausiert|erhöht|reduziert|gewechselt|weggelassen|entfernt)\s+werden\b'
+    - '\bbitte\b.{0,60}\b(ansetzen|geben|erhöhen|absetzen|pausieren|reduzieren|verabreichen|anlegen)\b'
+    - '\b(ab sofort|künftig)\b.{0,40}\b(geben|versorgen|versorgt|verabreichen|erhalten)\b'
+  report:
+    - '\b(laut|gemäß|lt\.)\b'
+    - '\b(steht|stehen|dokumentiert|vermerkt|notiert|genannt|nennen|nennt|aufgeführt)\b'
+    - '\bwurde\b.{0,60}\b(reduziert|erhöht|abgesetzt|angesetzt|verordnet|umgestellt|pausiert)\b'
+    - '\b(die entscheidung|entscheidet|muss die ärztin|muss der arzt|ärztliche entscheidung)\b'
 
 refusal: >-
   Diese Frage betrifft eine ärztliche Entscheidung (Dosierung, Diagnose oder Therapie). Dafür ist der Assistent nicht
