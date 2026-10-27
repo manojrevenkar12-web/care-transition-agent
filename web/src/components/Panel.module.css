@@ -1,0 +1,68 @@
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  min-width: 0;
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-4);
+  padding: var(--s-4) var(--s-5);
+  border-bottom: 1px solid var(--line);
+}
+
+.head h2 {
+  font-size: var(--text-lg);
+}
+
+.body {
+  padding: var(--s-4) var(--s-5) var(--s-5);
+  display: grid;
+  gap: var(--s-4);
+}
+
+.barRow {
+  display: grid;
+  grid-template-columns: minmax(7rem, 11rem) 1fr 4.5rem;
+  align-items: center;
+  gap: var(--s-3);
+  font-size: var(--text-sm);
+}
+
+.barLabel {
+  color: var(--ink-muted);
+}
+
+.track {
+  position: relative;
+  height: 0.625rem;
+  background: var(--surface-sunk);
+  border-radius: var(--radius-pill);
+}
+
+.fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  border-radius: var(--radius-pill);
+  background: var(--petrol);
+}
+
+.muted {
+  background: var(--line-strong);
+}
+
+.marker {
+  position: absolute;
+  top: -0.3rem;
+  bottom: -0.3rem;
+  width: 2px;
+  background: var(--ink);
+}
+
+.barValue {
+  text-align: right;
+  font-weight: var(--weight-medium);
+}

@@ -1,0 +1,145 @@
+.page {
+  display: grid;
+  gap: var(--s-6);
+}
+
+.lead {
+  color: var(--ink-muted);
+  margin-top: var(--s-2);
+  max-width: var(--measure);
+}
+
+.section {
+  margin-top: var(--s-4);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 32rem), 1fr));
+  gap: var(--s-5);
+  align-items: start;
+}
+
+.note {
+  color: var(--ink-muted);
+  font-size: var(--text-sm);
+  max-width: var(--measure);
+}
+
+.subhead {
+  font-weight: var(--weight-medium);
+  font-size: var(--text-sm);
+}
+
+.scroll {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-sm);
+}
+
+.table th,
+.table td {
+  text-align: left;
+  padding: var(--s-2) var(--s-2);
+  border-bottom: 1px solid var(--line);
+  vertical-align: baseline;
+}
+
+.table thead th {
+  color: var(--ink-muted);
+  font-weight: var(--weight-medium);
+}
+
+.table tbody th {
+  font-weight: var(--weight-regular);
+}
+
+.num {
+  text-align: right !important;
+  white-space: nowrap;
+}
+
+.muted {
+  color: var(--ink-muted);
+}
+
+.bars {
+  display: grid;
+  gap: var(--s-2);
+}
+
+.pair {
+  display: grid;
+  gap: var(--s-1);
+  padding-bottom: var(--s-1);
+}
+
+.judgeRow {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--s-3);
+  align-items: center;
+}
+
+.checks {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: var(--s-1);
+  font-size: var(--text-sm);
+}
+
+.checks li {
+  display: grid;
+  grid-template-columns: 3rem 1fr auto;
+  gap: var(--s-2);
+}
+
+.pass span:first-child {
+  color: var(--ready);
+  font-weight: var(--weight-bold);
+}
+
+.fail span:first-child {
+  color: var(--alert);
+  font-weight: var(--weight-bold);
+}
+
+.checkValue {
+  color: var(--ink-muted);
+}
+
+.deploy {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-3);
+  align-items: end;
+  border-top: 1px solid var(--line);
+  padding-top: var(--s-4);
+}
+
+.deploy label {
+  display: grid;
+  gap: var(--s-1);
+  font-size: var(--text-sm);
+  color: var(--ink-muted);
+}
+
+.deploy select,
+.deploy input {
+  min-height: 2.25rem;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-md);
+  padding: 0 var(--s-2);
+  background: var(--surface);
+  color: var(--ink);
+}
+
+.deploy input[type="number"] {
+  width: 5.5rem;
+}

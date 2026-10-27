@@ -76,12 +76,17 @@ def out_of_scope(question: str, guards: Guards | None = None) -> bool:
     return _any(guards.scope_maybe, q) and not _any(guards.scope_report, q)
 
 
+_ANSWER_SENTENCE = re.compile(r"(?<=[.!?])[\"“”»']?\s+")
+_FIRST_PERSON_ADVICE = re.compile(r"\b(ich|wir)\s+(empfehle\w*|rate\w*|würde\w*)\b", re.IGNORECASE)
+
+
 def clinical_advice(text: str, guards: Guards | None = None) -> list[str]:
-    """Sentences in model output that read as clinical advice (and are not attributed to the documents)."""
+    """Sentences in model output that read as clinical advice. A sentence attributed to the documents is reporting,
+    but attribution does not carry over to the next sentence, and first-person advice is advice whatever precedes it."""
     guards = guards or load()
     out = []
-    for _s, _e, t in sentences(text):
+    for t in _ANSWER_SENTENCE.split(text):
         low = t.lower()
-        if _any(guards.advice, low) and not _any(guards.advice_report, low):
+        if _FIRST_PERSON_ADVICE.search(low) or (_any(guards.advice, low) and not _any(guards.advice_report, low)):
             out.append(t.strip())
     return out

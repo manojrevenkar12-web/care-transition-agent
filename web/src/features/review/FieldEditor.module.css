@@ -1,0 +1,39 @@
+.editor {
+  display: grid;
+  gap: var(--s-3);
+}
+
+.editor select,
+.editor input[type="text"],
+.editor input[type="date"],
+.editor textarea {
+  width: 100%;
+  min-height: 2.25rem;
+  padding: var(--s-1) var(--s-3);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+}
+
+.editor textarea {
+  font-family: var(--font-source);
+  line-height: var(--leading-source);
+  padding: var(--s-2) var(--s-3);
+}
+
+.radios {
+  display: flex;
+  gap: var(--s-4);
+}
+
+.radio {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  cursor: pointer;
+}
+
+.actions {
+  display: flex;
+  gap: var(--s-2);
+}

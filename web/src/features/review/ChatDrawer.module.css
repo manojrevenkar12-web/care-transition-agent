@@ -1,0 +1,142 @@
+.drawer {
+  position: fixed;
+  top: var(--nav-height);
+  right: 0;
+  bottom: 0;
+  width: min(27rem, 100vw);
+  z-index: var(--z-drawer);
+  background: var(--surface);
+  border-left: 1px solid var(--line-strong);
+  box-shadow: var(--shadow-raise);
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+}
+
+.head {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--s-4);
+  padding: var(--s-5) var(--s-5) var(--s-3);
+  border-bottom: 1px solid var(--line);
+}
+
+.lead {
+  color: var(--ink-muted);
+  font-size: var(--text-sm);
+  margin-top: var(--s-1);
+}
+
+.close {
+  border: 0;
+  background: none;
+  width: 2rem;
+  height: 2rem;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.close:hover {
+  background: var(--surface-sunk);
+}
+
+.close svg {
+  width: 1rem;
+  height: 1rem;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.log {
+  overflow-y: auto;
+  padding: var(--s-4) var(--s-5);
+  display: grid;
+  align-content: start;
+  gap: var(--s-3);
+}
+
+.user,
+.assistant {
+  max-width: 92%;
+  border-radius: var(--radius-lg);
+  padding: var(--s-3) var(--s-4);
+  display: grid;
+  gap: var(--s-2);
+}
+
+.user {
+  justify-self: end;
+  background: var(--petrol-soft);
+}
+
+.assistant {
+  justify-self: start;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  width: 92%;
+}
+
+.text {
+  white-space: pre-wrap;
+}
+
+.cites {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: var(--s-1);
+}
+
+.cites li {
+  font-family: var(--font-source);
+  font-size: var(--text-sm);
+  border-left: 3px solid var(--marker);
+  padding-left: var(--s-2);
+}
+
+.cites li.missing {
+  border-left-color: var(--alert);
+}
+
+.warn {
+  color: var(--alert);
+  font-size: var(--text-sm);
+}
+
+.fb {
+  display: flex;
+  gap: var(--s-2);
+}
+
+.fbBtn {
+  border: 1px solid var(--line);
+  background: var(--surface);
+  border-radius: var(--radius-pill);
+  font-size: var(--text-xs);
+  padding: 0.125rem var(--s-2);
+  cursor: pointer;
+}
+
+.fbBtn[aria-pressed="true"] {
+  border-color: var(--petrol);
+  color: var(--petrol);
+}
+
+.form {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--s-2);
+  align-items: end;
+  padding: var(--s-3) var(--s-5) var(--s-5);
+  border-top: 1px solid var(--line);
+}
+
+.form textarea {
+  resize: none;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-md);
+  padding: var(--s-2) var(--s-3);
+  background: var(--surface);
+}

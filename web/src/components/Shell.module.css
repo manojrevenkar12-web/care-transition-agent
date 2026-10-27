@@ -1,0 +1,136 @@
+.shell {
+  min-height: 100vh;
+  display: grid;
+  grid-template-rows: var(--nav-height) 1fr;
+}
+
+.skip {
+  position: absolute;
+  left: var(--s-4);
+  top: calc(-1 * var(--nav-height));
+  background: var(--surface);
+  padding: var(--s-2) var(--s-3);
+  z-index: var(--z-toast);
+}
+
+.skip:focus {
+  top: var(--s-2);
+}
+
+.bar {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-sticky);
+  display: flex;
+  align-items: center;
+  gap: var(--s-8);
+  padding: 0 var(--s-6);
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  font-weight: var(--weight-bold);
+  font-size: var(--text-lg);
+  letter-spacing: var(--tracking-tight);
+}
+
+.logo {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.logo rect {
+  fill: var(--petrol);
+}
+
+.logo path {
+  stroke: var(--marker);
+  stroke-width: 3.5;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.nav {
+  display: flex;
+  gap: var(--s-1);
+  align-self: stretch;
+}
+
+.nav a {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 var(--s-3);
+  color: var(--ink-muted);
+  text-decoration: none;
+  font-weight: var(--weight-medium);
+  border-bottom: 2px solid transparent;
+}
+
+.nav a:hover {
+  color: var(--ink);
+}
+
+.nav a.active {
+  color: var(--ink);
+  border-bottom-color: var(--petrol);
+}
+
+.right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+}
+
+.who {
+  display: grid;
+  text-align: right;
+  line-height: 1.2;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+}
+
+.meta {
+  color: var(--ink-muted);
+  font-weight: var(--weight-regular);
+  font-size: var(--text-xs);
+}
+
+.link {
+  background: none;
+  border: 0;
+  padding: var(--s-1) var(--s-2);
+  color: var(--petrol);
+  font-size: var(--text-sm);
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+}
+
+.link:hover {
+  background: var(--petrol-soft);
+}
+
+.main {
+  width: 100%;
+  max-width: var(--page-max);
+  margin: 0 auto;
+  padding: var(--s-8) var(--s-6) var(--s-16);
+}
+
+@media (max-width: 720px) {
+  .bar {
+    gap: var(--s-3);
+    padding: 0 var(--s-4);
+  }
+  .who {
+    display: none;
+  }
+  .main {
+    padding: var(--s-6) var(--s-4) var(--s-12);
+  }
+}

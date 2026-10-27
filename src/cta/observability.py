@@ -102,6 +102,12 @@ ALLOWED_LOG_KEYS = {
     "kinds",
 }
 _DIGITS = re.compile(r"\d{6,}")
+_ID = re.compile(r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$|^[0-9a-f]{16}$")
+
+
+def _clean(v: str) -> str:
+    """Long digit runs (phone, case or insurance numbers) never reach a log; our own run and case ids do."""
+    return v if _ID.match(v) else _DIGITS.sub("<n>", v)[:120]
 
 
 class JsonFormatter(logging.Formatter):
@@ -110,7 +116,7 @@ class JsonFormatter(logging.Formatter):
         out = {"ts": round(record.created, 3), "level": record.levelname.lower(), "msg": record.getMessage()}
         for k, v in data.items():
             if k in ALLOWED_LOG_KEYS:
-                out[k] = v if not isinstance(v, str) else _DIGITS.sub("<n>", v)[:120]
+                out[k] = _clean(v) if isinstance(v, str) else v
         return json.dumps(out, ensure_ascii=False)
 
 

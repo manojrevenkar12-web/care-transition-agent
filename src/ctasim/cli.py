@@ -2,6 +2,7 @@
 
 ctasim golden --set dev --n 60 --seed 1000      write eval/golden/dev (cases, labels, judge labels)
 ctasim serve-model --port 8071                   the simulated model over HTTP (for the gateway)
+ctasim seed --api http://127.0.0.1:8000          fill a local console with simulated cases
 ctasim season scenarios/dev/season.yaml          a simulated month of a hospital using the agent
 """
 
@@ -25,6 +26,9 @@ def main(argv: list[str] | None = None) -> int:
     s = sub.add_parser("serve-model")
     s.add_argument("--port", type=int, default=8071)
     s.add_argument("--host", default="127.0.0.1")
+    sd = sub.add_parser("seed")
+    sd.add_argument("--api", default="http://127.0.0.1:8000")
+    sd.add_argument("--n", type=int, default=8)
     se = sub.add_parser("season")
     se.add_argument("scenario")
     se.add_argument("--out")
@@ -42,6 +46,11 @@ def main(argv: list[str] | None = None) -> int:
         from .model import app
 
         uvicorn.run(app(), host=a.host, port=a.port, log_level="warning")
+        return 0
+    if a.cmd == "seed":
+        from .seed import seed
+
+        print(json.dumps(seed(a.api, a.n)))
         return 0
     if a.cmd == "season":
         from .season import run_season

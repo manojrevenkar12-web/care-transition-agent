@@ -121,10 +121,27 @@ def main(argv: list[str] | None = None) -> int:
 
         with contextlib.ExitStack() as stack:
             if a.local_stack:
+                from ctasim.stack import DEMO_TOKENS
                 from ctasim.stack import local_stack as ls
+
+                from .crypto import Keyring
 
                 s = stack.enter_context(ls())
                 os.environ["CTA_GATEWAY_URL"], os.environ["CTA_GATEWAY_TOKEN"] = s["gateway_url"], s["token"]
+                os.environ.setdefault("CTA_KEYRING", Keyring.generate(["eval", "klinikum-nord", "st-elisabeth", "dev"]))
+                os.environ.setdefault("CTA_API_TOKENS", json.dumps(DEMO_TOKENS))
+                from .db import DB
+
+                db = DB()
+                db.migrate()
+                for t, name in (
+                    ("klinikum-nord", "Klinikum Nord"),
+                    ("st-elisabeth", "St. Elisabeth"),
+                    ("dev", "Development"),
+                ):
+                    db.ensure_tenant(t, name)
+                db.close()
+                print(f"local stack: gateway {s['gateway_url']}; demo tokens: {', '.join(DEMO_TOKENS)}", flush=True)
             uvicorn.run(create_app(), host=a.host, port=a.port, log_level="warning")
         return 0
     if a.cmd == "eval":

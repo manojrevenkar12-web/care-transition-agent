@@ -1,0 +1,127 @@
+.page {
+  display: grid;
+  gap: var(--s-6);
+  padding-bottom: var(--release-bar-height);
+}
+
+.head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--s-6);
+  flex-wrap: wrap;
+}
+
+.back {
+  display: inline-block;
+  font-size: var(--text-sm);
+  margin-bottom: var(--s-2);
+}
+
+.meta {
+  color: var(--ink-muted);
+  margin-top: var(--s-1);
+}
+
+.headActions {
+  display: flex;
+  gap: var(--s-2);
+}
+
+.workspace {
+  display: grid;
+  grid-template-columns: var(--form-pane) var(--source-pane);
+  gap: var(--s-6);
+  align-items: start;
+}
+
+.form {
+  display: grid;
+  gap: var(--s-4);
+  min-width: 0;
+}
+
+.formHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-4);
+}
+
+.section {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.sectionTitle {
+  font-size: var(--text-md);
+  padding: var(--s-3) var(--s-4);
+  border-bottom: 1px solid var(--line);
+  background: var(--surface-sunk);
+}
+
+.fields {
+  margin: 0;
+  padding: 0;
+}
+
+.sources {
+  position: sticky;
+  top: calc(var(--nav-height) + var(--s-4));
+  min-width: 0;
+}
+
+.docSkeleton {
+  display: grid;
+  gap: var(--s-4);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: var(--s-6);
+}
+
+.skelRow {
+  display: grid;
+  grid-template-columns: 2fr 2fr auto;
+  gap: var(--s-4);
+  padding: var(--s-3) var(--s-4);
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+}
+
+.running {
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+  padding: var(--s-8);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  font-weight: var(--weight-medium);
+}
+
+.pulse {
+  width: 0.9rem;
+  height: 0.9rem;
+  border-radius: 50%;
+  background: var(--marker);
+  box-shadow: 0 0 0 0 var(--marker);
+  animation: pulse 1.4s ease-out infinite;
+}
+
+@keyframes pulse {
+  to {
+    box-shadow: 0 0 0 0.9rem transparent;
+  }
+}
+
+@media (max-width: 1080px) {
+  .workspace {
+    grid-template-columns: 1fr;
+  }
+  .sources {
+    position: static;
+  }
+}

@@ -21,6 +21,14 @@ from cta import config
 
 from .model import app
 
+# Demo users for `cta serve --local-stack` and the end-to-end tests. Never used outside the local stack.
+DEMO_TOKENS = {
+    "demo-clinician": {"user": "dr.weber", "tenant": "klinikum-nord", "role": "clinician"},
+    "demo-coordinator": {"user": "sozialdienst.kaya", "tenant": "klinikum-nord", "role": "coordinator"},
+    "demo-quality": {"user": "ki-team", "tenant": "klinikum-nord", "role": "quality"},
+    "demo-other-hospital": {"user": "dr.lang", "tenant": "st-elisabeth", "role": "clinician"},
+}
+
 
 def _port() -> int:
     with socket.socket() as s:

@@ -107,3 +107,8 @@ def test_decisions_versus_what_the_documents_say(question: str, oos: bool) -> No
 )
 def test_reported_doses_are_not_advice(answer: str, advice: bool) -> None:
     assert bool(G.clinical_advice(answer)) is advice
+
+
+def test_attribution_does_not_shield_the_next_sentence() -> None:
+    answer = "Laut Dokument d3: „Kontakt zur Nachbarin.“ Wir empfehlen eine Dosisanpassung."
+    assert G.clinical_advice(answer) == ["Wir empfehlen eine Dosisanpassung."]
