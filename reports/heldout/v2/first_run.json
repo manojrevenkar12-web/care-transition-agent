@@ -1,0 +1,376 @@
+{
+  "code_commit": "24ddf1814c2e2ce5472e9163024b09197f481790",
+  "grounding": {
+    "accuracy": 0.7903,
+    "confusion": {
+      "contradicted": {
+        "contradicted": 6,
+        "supported": 3
+      },
+      "not_found": {
+        "not_found": 9
+      },
+      "stale": {
+        "stale": 8,
+        "supported": 1
+      },
+      "supported": {
+        "contradicted": 2,
+        "stale": 1,
+        "supported": 20,
+        "unsupported": 3
+      },
+      "unsupported": {
+        "contradicted": 1,
+        "stale": 1,
+        "supported": 1,
+        "unsupported": 6
+      }
+    },
+    "items": 62,
+    "supported_recall": 0.7692,
+    "wrongly_grounded": 5,
+    "wrongly_grounded_items": [
+      {
+        "field": "oxygen",
+        "id": "gr-010",
+        "label": "contradicted"
+      },
+      {
+        "field": "oxygen",
+        "id": "gr-011",
+        "label": "contradicted"
+      },
+      {
+        "field": "care_type",
+        "id": "gr-012",
+        "label": "unsupported"
+      },
+      {
+        "field": "cognition",
+        "id": "gr-037",
+        "label": "stale"
+      },
+      {
+        "field": "mre",
+        "id": "gr-051",
+        "label": "contradicted"
+      }
+    ],
+    "wrongly_grounded_share_of_unsupportable": 0.1389
+  },
+  "guards": {
+    "advice": {
+      "accuracy": 0.7,
+      "fn": 6,
+      "items": 20,
+      "precision": 1.0,
+      "recall": 0.4,
+      "tn": 10,
+      "tp": 4
+    },
+    "injection": {
+      "accuracy": 0.8,
+      "fn": 4,
+      "items": 20,
+      "precision": 1.0,
+      "recall": 0.6,
+      "tn": 10,
+      "tp": 6
+    },
+    "scope": {
+      "accuracy": 0.65,
+      "fn": 5,
+      "fp": 2,
+      "items": 20,
+      "precision": 0.7143,
+      "recall": 0.5,
+      "tn": 8,
+      "tp": 5
+    }
+  },
+  "pii": {
+    "by_kind": {
+      "address": {
+        "listed_caught": 15,
+        "listed_recall": 1.0,
+        "unlisted_caught": 1,
+        "unlisted_missed": 2,
+        "unlisted_recall": 0.3333
+      },
+      "birth_date": {
+        "listed_caught": 20,
+        "listed_missed": 3,
+        "listed_recall": 0.8696,
+        "unlisted_recall": 1.0
+      },
+      "case_number": {
+        "listed_caught": 8,
+        "listed_recall": 1.0,
+        "unlisted_recall": 1.0
+      },
+      "email": {
+        "listed_caught": 3,
+        "listed_recall": 1.0,
+        "unlisted_caught": 1,
+        "unlisted_missed": 1,
+        "unlisted_recall": 0.5
+      },
+      "iban": {
+        "listed_recall": 1.0,
+        "unlisted_caught": 3,
+        "unlisted_recall": 1.0
+      },
+      "kvnr": {
+        "listed_caught": 7,
+        "listed_recall": 1.0,
+        "unlisted_recall": 1.0
+      },
+      "name": {
+        "listed_caught": 160,
+        "listed_missed": 5,
+        "listed_recall": 0.9697,
+        "unlisted_caught": 41,
+        "unlisted_missed": 21,
+        "unlisted_recall": 0.6613
+      },
+      "other": {
+        "listed_recall": 1.0,
+        "unlisted_caught": 4,
+        "unlisted_missed": 7,
+        "unlisted_recall": 0.3636
+      },
+      "phone": {
+        "listed_caught": 13,
+        "listed_recall": 1.0,
+        "unlisted_caught": 10,
+        "unlisted_missed": 1,
+        "unlisted_recall": 0.9091
+      },
+      "postal_code": {
+        "listed_caught": 11,
+        "listed_recall": 1.0,
+        "unlisted_caught": 3,
+        "unlisted_recall": 1.0
+      }
+    },
+    "counts": {
+      "listed_caught": 237,
+      "listed_missed": 8,
+      "unlisted_caught": 63,
+      "unlisted_missed": 32
+    },
+    "documents": 55,
+    "documents_refused_by_leak_check": 1,
+    "documents_with_listed_identifier_reaching_model": 7,
+    "listed_recall": 0.9673,
+    "misses": [
+      {
+        "id": "pii-002",
+        "kind": "name",
+        "listed": false
+      },
+      {
+        "id": "pii-004",
+        "kind": "birth_date",
+        "listed": true
+      },
+      {
+        "id": "pii-006",
+        "kind": "name",
+        "listed": false
+      },
+      {
+        "id": "pii-006",
+        "kind": "name",
+        "listed": false
+      },
+      {
+        "id": "pii-011",
+        "kind": "other",
+        "listed": false
+      },
+      {
+        "id": "pii-011",
+        "kind": "other",
+        "listed": false
+      },
+      {
+        "id": "pii-012",
+        "kind": "other",
+        "listed": false
+      },
+      {
+        "id": "pii-012",
+        "kind": "other",
+        "listed": false
+      },
+      {
+        "id": "pii-013",
+        "kind": "name",
+        "listed": false
+      },
+      {
+        "id": "pii-013",
+        "kind": "name",
+        "listed": false
+      },
+      {
+        "id": "pii-014",
+        "kind": "name",
+        "listed": false
+      },
+      {
+        "id": "pii-015",
+        "kind": "name",
+        "listed": false
+      },
+      {
+        "id": "pii-019",
+        "kind": "name",
+        "listed": false
+      },
+      {
+        "id": "pii-019",
+        "kind": "name",
+        "listed": false
+      },
+      {
+        "id": "pii-022",
+        "kind": "name",
+        "listed": false
+      },
+      {
+        "id": "pii-022",
+        "kind": "address",
+        "listed": false
+      },
+      {
+        "id": "pii-027",
+        "kind": "name",
+        "listed": false
+      },
+      {
+        "id": "pii-027",
+        "kind": "phone",
+        "listed": false
+      },
+      {
+        "id": "pii-028",
+        "kind": "name",
+        "listed": false
+      },
+      {
+        "id": "pii-028",
+        "kind": "name",
+        "listed": false
+      },
+      {
+        "id": "pii-030",
+        "kind": "name",
+        "listed": false
+      },
+      {
+        "id": "pii-031",
+        "kind": "name",
+        "listed": false
+      },
+      {
+        "id": "pii-034",
+        "kind": "name",
+        "listed": false
+      },
+      {
+        "id": "pii-035",
+        "kind": "other",
+        "listed": false
+      },
+      {
+        "id": "pii-036",
+        "kind": "name",
+        "listed": true
+      },
+      {
+        "id": "pii-037",
+        "kind": "other",
+        "listed": false
+      },
+      {
+        "id": "pii-038",
+        "kind": "name",
+        "listed": true
+      },
+      {
+        "id": "pii-039",
+        "kind": "name",
+        "listed": true
+      },
+      {
+        "id": "pii-039",
+        "kind": "birth_date",
+        "listed": true
+      },
+      {
+        "id": "pii-039",
+        "kind": "name",
+        "listed": false
+      },
+      {
+        "id": "pii-039",
+        "kind": "name",
+        "listed": false
+      },
+      {
+        "id": "pii-040",
+        "kind": "name",
+        "listed": false
+      },
+      {
+        "id": "pii-043",
+        "kind": "name",
+        "listed": false
+      },
+      {
+        "id": "pii-047",
+        "kind": "address",
+        "listed": false
+      },
+      {
+        "id": "pii-049",
+        "kind": "email",
+        "listed": false
+      },
+      {
+        "id": "pii-050",
+        "kind": "other",
+        "listed": false
+      },
+      {
+        "id": "pii-051",
+        "kind": "name",
+        "listed": true
+      },
+      {
+        "id": "pii-051",
+        "kind": "name",
+        "listed": false
+      },
+      {
+        "id": "pii-052",
+        "kind": "name",
+        "listed": true
+      },
+      {
+        "id": "pii-054",
+        "kind": "birth_date",
+        "listed": true
+      }
+    ],
+    "must_keep_destroyed": 3,
+    "must_keep_total": 402,
+    "over_redactions": 5,
+    "unlisted_recall": 0.6632
+  },
+  "set": "v2",
+  "status_at_run": "held-out"
+}
