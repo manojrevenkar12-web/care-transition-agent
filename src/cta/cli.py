@@ -92,7 +92,8 @@ def main(argv: list[str] | None = None) -> int:
     r.add_argument("action", choices=["purge"])
     r.add_argument("--tenant", required=True)
     h = sub.add_parser("heldout")
-    h.add_argument("action", choices=["run"])
+    h.add_argument("action", choices=["run", "rescore"])
+    h.add_argument("--reason", default="")
     h.add_argument("--set", required=True)
     h.add_argument("--local-stack", action="store_true")
     f = sub.add_parser("fhir")
@@ -140,7 +141,12 @@ def main(argv: list[str] | None = None) -> int:
                 gw = Gateway(s["gateway_url"], s["token"])
             else:
                 gw = Gateway()
-            res = heldout.run(a.set, gw)
+            if a.action == "rescore":
+                if not a.reason:
+                    raise SystemExit("--reason is required: say what was wrong with the scorer")
+                res = heldout.rescore(a.set, gw, a.reason)
+            else:
+                res = heldout.run(a.set, gw)
         _print(
             {k: v for k, v in res.items() if k not in ("pii",)}
             | {"pii": {k: v for k, v in res.get("pii", {}).items() if k != "misses"}}

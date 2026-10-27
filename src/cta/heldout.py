@@ -30,10 +30,19 @@ def _read(path: Path) -> list[dict[str, Any]]:
     return [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
 
 
-def _occurrences(text: str, sub: str) -> list[tuple[int, int]]:
+def _is_word(ch: str) -> bool:
+    return ch.isalnum()
+
+
+def _occurrences(text: str, sub: str, inside: list[tuple[int, int]] | None = None) -> list[tuple[int, int]]:
+    """Whole-word occurrences of sub ("Stern" in "Hr. Stern", not in "Sternotomie"), outside the given spans."""
     out, i = [], text.find(sub)
     while i >= 0 and sub:
-        out.append((i, i + len(sub)))
+        j = i + len(sub)
+        left_ok = not (_is_word(sub[0]) and i > 0 and _is_word(text[i - 1]))
+        right_ok = not (_is_word(sub[-1]) and j < len(text) and _is_word(text[j]))
+        if left_ok and right_ok and not any(a <= i and j <= b for a, b in inside or []):
+            out.append((i, j))
         i = text.find(sub, i + 1)
     return out
 
@@ -51,25 +60,28 @@ def run_pii(items: list[dict[str, Any]], gw: Gateway) -> dict[str, Any]:
         token = gw.seal(ident)
         res = gw.pseudonymize("eval", ident["case"], token, [it["text"]])[0]
         spans = [(r["start"], r["end"]) for r in res.replacements]
+        keep_spans = [o for k in it.get("must_keep", []) for o in _occurrences(it["text"], k)]
         annotated: list[tuple[int, int]] = []
+        listed_spans: list[tuple[int, int]] = []
+        seen: set[str] = set()
         for idf in it.get("identifiers", []):
-            occ = _occurrences(it["text"], idf["text"])
+            if idf["text"] in seen:  # one entry per occurrence: score each occurrence once
+                continue
+            seen.add(idf["text"])
+            occ = _occurrences(it["text"], idf["text"], keep_spans)
             annotated += occ
+            key = "listed" if idf.get("listed") else "unlisted"
+            if idf.get("listed"):
+                listed_spans += occ
             for s, e in occ:
-                covered = any(rs <= s and re_ >= e for rs, re_ in spans) or any(rs < e and re_ > s for rs, re_ in spans)
-                key = "listed" if idf.get("listed") else "unlisted"
+                covered = any(rs < e and re_ > s for rs, re_ in spans)
                 by_kind[idf["kind"]][f"{key}_{'caught' if covered else 'missed'}"] += 1
                 listed[f"{key}_{'caught' if covered else 'missed'}"] += 1
                 if not covered:
                     misses.append({"id": it["id"], "kind": idf["kind"], "listed": bool(idf.get("listed"))})
         if res.leaks:
             refused += 1
-        elif any(
-            not any(rs < e and re_ > s for rs, re_ in spans)
-            for idf in it.get("identifiers", [])
-            if idf.get("listed")
-            for s, e in _occurrences(it["text"], idf["text"])
-        ):
+        elif any(not any(rs < e and re_ > s for rs, re_ in spans) for s, e in listed_spans):
             leaked_listed.append(it["id"])
         for k in it.get("must_keep", []):
             keep["kept" if k in res.text else "destroyed"] += 1
@@ -145,6 +157,45 @@ def run_guards(items: list[dict[str, Any]]) -> dict[str, Any]:
             **dict(c),
         }
     return out
+
+
+SCORED_CODE = ["gateway", "config", "src/cta/grounding.py", "src/cta/guardrails.py", "src/cta/profile.py"]
+
+
+def rescore(set_name: str, gw: Gateway, reason: str) -> dict[str, Any]:
+    """Score the first run again after a fix to the scorer only. Allowed only while the components under test are
+    byte-identical to the first run's commit, so the numbers are what that code did on unseen data. The first run
+    stays as recorded; the rescored file sits next to it and is pinned too."""
+    import subprocess
+
+    root = config.root()
+    first = json.loads((root / "reports" / "heldout" / set_name / "first_run.json").read_text(encoding="utf-8"))
+    diff = subprocess.run(
+        ["git", "diff", "--stat", first["code_commit"], "--", *SCORED_CODE], cwd=root, capture_output=True, text=True
+    )
+    if diff.returncode != 0 or diff.stdout.strip():
+        raise SystemExit(
+            "the components under test changed since the first run; rescoring is not allowed:\n" + diff.stdout
+        )
+    d = root / "heldout" / set_name
+    out = root / "reports" / "heldout" / set_name / "first_run_rescored.json"
+    if out.exists():
+        raise SystemExit(f"{out} exists and is not rewritten")
+    result = {
+        "set": set_name,
+        "code_commit": first["code_commit"],
+        "rescored_because": reason,
+        "pii": run_pii(_read(d / "pii.jsonl"), gw),
+        "grounding": run_grounding(_read(d / "grounding.jsonl")),
+        "guards": run_guards(_read(d / "guards.jsonl")),
+    }
+    out.write_text(json.dumps(result, indent=2, ensure_ascii=False, sort_keys=True), encoding="utf-8")
+    pin = root / "heldout" / "first_run.sha256"
+    pin.write_text(
+        pin.read_text()
+        + f"{hashlib.sha256(out.read_bytes()).hexdigest()}  reports/heldout/{set_name}/first_run_rescored.json\n"
+    )
+    return result
 
 
 def run(set_name: str, gw: Gateway | None) -> dict[str, Any]:
