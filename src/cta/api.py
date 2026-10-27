@@ -369,8 +369,9 @@ def create_app(services: Services | None = None, static_dir: Path | None = None)
         out: dict[str, Any] = {"eval": {}, "heldout": {}}
         for p in sorted((root / "eval").glob("*.json")):
             out["eval"][p.stem] = json.loads(p.read_text(encoding="utf-8"))
-        for p in sorted((root / "heldout").glob("*/first_run.json")):
-            out["heldout"][p.parent.name] = json.loads(p.read_text(encoding="utf-8"))
+        for p in sorted((root / "heldout").glob("*/first_run*.json")):
+            key = p.parent.name + (" (rescored)" if p.stem.endswith("rescored") else "")
+            out["heldout"][key] = json.loads(p.read_text(encoding="utf-8"))
         return out
 
     # ---- prompts ----------------------------------------------------------------------------------------------------
