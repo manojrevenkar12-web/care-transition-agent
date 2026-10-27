@@ -39,16 +39,16 @@ Details: [docs/DESIGN.md](docs/DESIGN.md). Decisions: [docs/adr](docs/adr). Regu
 All numbers come from committed reports (`reports/`) and can be regenerated with the commands in
 [docs/EVALUATION.md](docs/EVALUATION.md).
 
-**Golden set** (60 simulated cases, 1,140 fields; simulated model behind the real gateway):
+**Golden set** (200 simulated cases, 3,800 fields; simulated model behind the real gateway; deterministic, so the same code gives the same numbers):
 
 | Drafter | Field accuracy | Wrong but shown as ready (major) | Review load | Fabrications | Gate |
 |---|---|---|---|---|---|
-| prompt v2 | 97.4 % | 0 | 3.1 % | 0 | passed against v1 (paired +0.013, 95 % CI +0.004 to +0.024) |
-| prompt v1 | 96.0 % | 0 | 7.2 % | 40 | |
-| prompt v2, hasty model | 88.0 % | 0 | 15.1 % | 4 | failed: does not ship |
+| prompt v2 | 96.9 % | 0 of 2,622 ready values | 3.0 % | 0 | passed against v1 (paired +0.004, 95 % CI −0.002 to +0.011) |
+| prompt v1 | 96.5 % | 1 | 6.7 % | 126 | |
+| prompt v2, hasty model | 90.3 % | 1 | 13.6 % | 8 | failed on 4 of 6 checks: does not ship |
 
-**LLM judge** for the free-text summary: used only where Cohen's κ against clinician labels ≥ 0.6 (covers needs 0.75,
-no advice 0.84). "No identifiers" scores κ −0.01 because the judge only ever sees pseudonymised text, so that check
+**LLM judge** for the free-text summary: used only where Cohen's κ against clinician labels ≥ 0.6 (covers needs 0.83,
+no advice 0.74). "No identifiers" scores κ 0.09 because the judge only ever sees pseudonymised text, so that check
 stays with the gateway.
 
 **Blind held-out sets** for the gateway, the verifier and the guards, written by someone who saw only the writing

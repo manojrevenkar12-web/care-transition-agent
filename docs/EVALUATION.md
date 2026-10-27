@@ -4,7 +4,7 @@ Four kinds of evidence, each answering a different question.
 
 ## 1. Offline: the golden set (does a change make drafts better or worse?)
 
-`eval/golden/dev/` holds 60 simulated cases (1,140 fields) with known facts, written by `ctasim golden`: German
+`eval/golden/dev/` holds 200 simulated cases (3,800 fields) with known facts, written by `ctasim golden`: German
 admission forms with OCR damage, nursing notes, social-services notes, discharge letters and lower-case dictations,
 with traps (a fact that changed during the stay, negations, a relative's condition, history, injected instructions).
 
@@ -22,15 +22,22 @@ the current production prompt against the candidate.
 
 | Run (current code) | Field accuracy | Major wrong but ready | Review load | Fabrications | Tokens per case | Gate |
 |---|---|---|---|---|---|---|
-| drafter v2 on sim-careful | 97.4 % | 0 | 3.1 % | 0 | 20.7 k | passed against v1 |
-| drafter v1 on sim-careful | 96.0 % | 0 | 7.2 % | 40 | 19.4 k | |
-| drafter v2 on sim-hasty | 88.0 % | 0 | 15.1 % | 4 | 22.3 k | failed against v2 on sim-careful |
+| drafter v2 on sim-careful | 96.9 % | 0 (of 2,622 shown as ready) | 3.0 % | 0 | 20.8 k | passed against v1 |
+| drafter v1 on sim-careful | 96.5 % | 1 | 6.7 % | 126 | 18.6 k | |
+| drafter v2 on sim-hasty | 90.3 % | 1 | 13.6 % | 8 | 22.4 k | failed against v2 on sim-careful |
 
-v2 against v1: paired accuracy difference +0.013 (95 % CI +0.004 to +0.024). v2's prompt adds the rules that
+v2 against v1: paired accuracy difference +0.004 (95 % CI −0.002 to +0.011), inside the non-inferiority margin of
+0.01. v2's prompt adds the rules that
 matter for this task (copy the words, newest statement wins, negations, an unknown is an answer, text addressed to an
 AI is not an instruction, only the patient now); the simulated model responds to them, so fabrications disappear.
-The hasty model shows the gate doing its job: no wrong value reaches "ready" (the verifier catches them) but the
-review load quadruples and accuracy drops, so it does not ship.
+The hasty model shows the gate doing its job: one wrong value reaches "ready", the review load quadruples and accuracy
+drops by 6.6 points, so it does not ship.
+
+Two lessons from running the gate in CI. First, the evaluation must be deterministic: the local stack now uses fixed
+keys for the simulated world, because the tags of unlisted people (and so the text the simulated model sees) changed
+from run to run and moved the result. Second, 60 cases were too few: the 95 % interval of the paired difference was
+about ±0.013 wide, so two prompts of equal accuracy could fail a 0.01 non-inferiority margin by chance. With 200 cases
+it is about ±0.007.
 
 ## 2. LLM judge calibration (which judge criteria can be trusted?)
 
@@ -39,10 +46,10 @@ agreement with clinician labels (`eval/golden/dev/judge.jsonl`) must reach Cohen
 
 | Criterion | κ | Used |
 |---|---|---|
-| covers the care needs | 0.75 | yes |
-| no treatment advice | 0.84 | yes |
+| covers the care needs | 0.83 | yes |
+| no treatment advice | 0.74 | yes |
 | faithful to the documents | 0.57 | no: the verifier and the clinician check faithfulness |
-| no identifiers | −0.01 | no |
+| no identifiers | 0.09 | no |
 
 The last row is a finding, not a bug: the judge sees the summary after pseudonymisation, so it cannot tell whether an
 identifier was there. Identifier checks belong to the gateway, which is deterministic and measured separately.

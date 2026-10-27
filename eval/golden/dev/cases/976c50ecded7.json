@@ -1,0 +1,349 @@
+{
+ "case_id": "976c50ecded7",
+ "tenant": "eval",
+ "as_of": "2026-10-12",
+ "archetype": "palliativ",
+ "traps": [
+  "oxygen_weaned"
+ ],
+ "injection": null,
+ "labels": {
+  "care_type": "hospiz",
+  "discharge_date": "2026-10-20",
+  "pflegegrad": null,
+  "wish_region": "Berlin-Reinickendorf",
+  "mobility": "bettlaegerig",
+  "transfer_help": "zwei_personen",
+  "cognition": "orientiert",
+  "runaway_risk": null,
+  "oxygen": false,
+  "ventilation": "keine",
+  "dialysis": false,
+  "peg_tube": false,
+  "wound_care": false,
+  "urinary_catheter": false,
+  "insulin": true,
+  "mre": "keine",
+  "insurance_type": "gkv",
+  "legal_representation": "keine",
+  "interpreter": null
+ },
+ "key_facts": [
+  "care_type",
+  "mobility"
+ ],
+ "bundle": {
+  "resourceType": "Bundle",
+  "type": "transaction",
+  "entry": [
+   {
+    "resource": {
+     "resourceType": "Patient",
+     "id": "976c50ecded7",
+     "identifier": [
+      {
+       "system": "http://fhir.de/sid/gkv/kvid-10",
+       "value": "Y479034964"
+      }
+     ],
+     "name": [
+      {
+       "use": "official",
+       "family": "Nowak",
+       "given": [
+        "Erich"
+       ]
+      }
+     ],
+     "gender": "male",
+     "birthDate": "1942-07-08",
+     "address": [
+      {
+       "line": [
+        "Ahornallee 109"
+       ],
+       "postalCode": "12043",
+       "city": "Berlin",
+       "country": "DE"
+      }
+     ]
+    }
+   },
+   {
+    "resource": {
+     "resourceType": "RelatedPerson",
+     "id": "976c50ecded7-rel",
+     "patient": {
+      "reference": "Patient/976c50ecded7"
+     },
+     "relationship": [
+      {
+       "text": "Sohn"
+      }
+     ],
+     "name": [
+      {
+       "family": "Nowak",
+       "given": [
+        "Frank"
+       ]
+      }
+     ],
+     "telecom": [
+      {
+       "system": "phone",
+       "value": "0152 9866473"
+      }
+     ]
+    }
+   },
+   {
+    "resource": {
+     "resourceType": "Encounter",
+     "id": "976c50ecded7",
+     "status": "in-progress",
+     "class": {
+      "code": "IMP"
+     },
+     "subject": {
+      "reference": "Patient/976c50ecded7"
+     },
+     "identifier": [
+      {
+       "system": "urn:klinikum-nord:fallnummer",
+       "value": "2026-602428"
+      }
+     ]
+    }
+   },
+   {
+    "resource": {
+     "resourceType": "Practitioner",
+     "id": "976c50ecded7-pr0",
+     "name": [
+      {
+       "family": "Reuter",
+       "given": [
+        "Tobias"
+       ]
+      }
+     ]
+    }
+   },
+   {
+    "resource": {
+     "resourceType": "Practitioner",
+     "id": "976c50ecded7-pr1",
+     "name": [
+      {
+       "family": "Wiegand",
+       "given": [
+        "Nora"
+       ]
+      }
+     ]
+    }
+   },
+   {
+    "resource": {
+     "resourceType": "DocumentReference",
+     "id": "976c50ecded7-aufnahme",
+     "status": "current",
+     "type": {
+      "text": "Aufnahmebogen (Scan)"
+     },
+     "category": [
+      {
+       "text": "aufnahme"
+      }
+     ],
+     "subject": {
+      "reference": "Patient/976c50ecded7"
+     },
+     "context": {
+      "encounter": [
+       {
+        "reference": "Encounter/976c50ecded7"
+       }
+      ]
+     },
+     "date": "2026-09-25T09:40:00+02:00",
+     "author": [
+      {
+       "display": "Pflege"
+      }
+     ],
+     "content": [
+      {
+       "attachment": {
+        "contentType": "text/plain; charset=utf-8",
+        "title": "Aufnahmebogen (Scan)",
+        "data": "QVVGTkFITUVCT0dFTiBLbGluaWt1bSBOb3JkLiBOYW1lOiBOb3dhaywgRXJpY2ggZ2ViLjogMDguMDcuMTk0MiBBbnNjaHJpZnQ6IEFob3JuYWxsZWUgMTA5LCAxMjA0MyBCZXJsaW4gS1ZOUjogWTQ3OTAzNDk2NCBGYWxsLU5yLjogMjAyNi02MDI0MjggS29udGFrdDogU29obiBGcmFuayBOb3dhaywgVGVsLiAwMTUyIDk4NjY0NzMgSGF1c2FyenQ6IERyLiBtZWQuIEluZXMgRmFiZXIgS3Jhbmtlbmthc3NlOiBUZWNobmlrZXIgS3Jhbmtlbmthc3NlLg=="
+       }
+      }
+     ]
+    }
+   },
+   {
+    "resource": {
+     "resourceType": "DocumentReference",
+     "id": "976c50ecded7-pflege1",
+     "status": "current",
+     "type": {
+      "text": "Pflegebericht (Aufnahme)"
+     },
+     "category": [
+      {
+       "text": "pflegebericht"
+      }
+     ],
+     "subject": {
+      "reference": "Patient/976c50ecded7"
+     },
+     "context": {
+      "encounter": [
+       {
+        "reference": "Encounter/976c50ecded7"
+       }
+      ]
+     },
+     "date": "2026-09-25T17:40:00+02:00",
+     "author": [
+      {
+       "display": "Pflege"
+      }
+     ],
+     "content": [
+      {
+       "attachment": {
+        "contentType": "text/plain; charset=utf-8",
+        "title": "Pflegebericht (Aufnahme)",
+        "data": "UGZsZWdlYW5hbW5lc2UgSGVyciBOb3dhay4gQmVpIEF1Zm5haG1lIE8yLUJlZGFyZiB2b24gNCBsL21pbi4gWmltbWVybmFjaGJhcmluIEZyYXUgS8O2aGxlciBrbGFndCDDvGJlciBuw6RjaHRsaWNoZSBVbnJ1aGUu"
+       }
+      }
+     ]
+    }
+   },
+   {
+    "resource": {
+     "resourceType": "DocumentReference",
+     "id": "976c50ecded7-pflege2",
+     "status": "current",
+     "type": {
+      "text": "Pflegeüberleitung"
+     },
+     "category": [
+      {
+       "text": "pflegebericht"
+      }
+     ],
+     "subject": {
+      "reference": "Patient/976c50ecded7"
+     },
+     "context": {
+      "encounter": [
+       {
+        "reference": "Encounter/976c50ecded7"
+       }
+      ]
+     },
+     "date": "2026-10-11T14:05:00+02:00",
+     "author": [
+      {
+       "display": "Pflege"
+      }
+     ],
+     "content": [
+      {
+       "attachment": {
+        "contentType": "text/plain; charset=utf-8",
+        "title": "Pflegeüberleitung",
+        "data": "UGZsZWdlcmlzY2hlIMOcYmVybGVpdHVuZyBmw7xyIEhlcnJuIEVyaWNoIE5vd2FrLiBXZWl0ZXJoaW4gaW1tb2JpbCB1bmQgYmV0dGzDpGdlcmlnLiBUcmFuc2ZlciBlcmZvcmRlcnQgendlaSBQZXJzb25lbi4gWmVpdGxpY2gsIMO2cnRsaWNoIHVuZCB6dXIgUGVyc29uIG9yaWVudGllcnQuIE9yYWxlIEtvc3QsIGtlaW5lIFNvbmRlbmVybsOkaHJ1bmcuIEtlaW5lIFd1bmRlbi4gS2VpbiBCbGFzZW5rYXRoZXRlci4="
+       }
+      }
+     ]
+    }
+   },
+   {
+    "resource": {
+     "resourceType": "DocumentReference",
+     "id": "976c50ecded7-sozial",
+     "status": "current",
+     "type": {
+      "text": "Sozialdienst – Entlassplanung"
+     },
+     "category": [
+      {
+       "text": "sozialdienst"
+      }
+     ],
+     "subject": {
+      "reference": "Patient/976c50ecded7"
+     },
+     "context": {
+      "encounter": [
+       {
+        "reference": "Encounter/976c50ecded7"
+       }
+      ]
+     },
+     "date": "2026-10-10T11:20:00+02:00",
+     "author": [
+      {
+       "display": "Sozialdienst"
+      }
+     ],
+     "content": [
+      {
+       "attachment": {
+        "contentType": "text/plain; charset=utf-8",
+        "title": "Sozialdienst – Entlassplanung",
+        "data": "R2VzcHLDpGNoIG1pdCBQYXRpZW50IHVuZCBTb2huIEZyYW5rIE5vd2FrIChUZWwuIDAxNTIgOTg2NjQ3MykuIFBhdC4gdW5kIEZhbWlsaWUgd8O8bnNjaGVuIGRpZSBWZXJsZWd1bmcgaW4gZWluIHN0YXRpb27DpHJlcyBIb3NwaXouIERpZSBQYXQuIG3DtmNodGUgZ2VybiBpbiBCZXJsaW4tUmVpbmlja2VuZG9yZiBibGVpYmVuLiBFaW5lIEJldHJldXVuZyBiZXN0ZWh0IG5pY2h0LiBLb250YWt0IHp1ciBOYWNoYmFyaW4gRnJhdSBLcmF1cywgZGllIGJpc2hlciBlaW5nZWthdWZ0IGhhdC4="
+       }
+      }
+     ]
+    }
+   },
+   {
+    "resource": {
+     "resourceType": "DocumentReference",
+     "id": "976c50ecded7-arztbrief",
+     "status": "current",
+     "type": {
+      "text": "Vorläufiger Entlassbrief"
+     },
+     "category": [
+      {
+       "text": "arztbrief"
+      }
+     ],
+     "subject": {
+      "reference": "Patient/976c50ecded7"
+     },
+     "context": {
+      "encounter": [
+       {
+        "reference": "Encounter/976c50ecded7"
+       }
+      ]
+     },
+     "date": "2026-10-12T08:30:00+02:00",
+     "author": [
+      {
+       "display": "Arzt"
+      }
+     ],
+     "content": [
+      {
+       "attachment": {
+        "contentType": "text/plain; charset=utf-8",
+        "title": "Vorläufiger Entlassbrief",
+        "data": "S2xpbmlrdW0gTm9yZCwgS2xpbmlrIGbDvHIgT25rb2xvZ2llLiBTZWhyIGdlZWhydGUgRnJhdSBLb2xsZWdpbiwgc2VociBnZWVocnRlciBIZXJyIEtvbGxlZ2UsIHdpciBiZXJpY2h0ZW4gw7xiZXIgSGVycm4gRXJpY2ggTm93YWssIGdlYi4gMDguMDcuMTk0MiwgaW4gc3RhdGlvbsOkcmVyIEJlaGFuZGx1bmcgc2VpdCBkZW0gMjUuMDkuMjAyNi4gRGlhZ25vc2VuOiBNZXRhc3Rhc2llcnRlcyBQYW5rcmVhc2thcnppbm9tIChDMjUuMCksIHBhbGxpYXRpdmUgU2l0dWF0aW9uOyBUdW1vcnNjaG1lcnouIFZlcmxhdWYgdW5kIFByb2NlZGVyZTogRWluZSBTYXVlcnN0b2ZmdGhlcmFwaWUgaXN0IG5pY2h0IGVyZm9yZGVybGljaC4gS2VpbmUgQmVhdG11bmcuIEtlaW5lIERpYWx5c2VwZmxpY2h0LiBJbnN1bGluIG5hY2ggU2NoZW1hLCBCWi1Lb250cm9sbGVuIDR4IHTDpGdsaWNoLiBNUkUtU2NyZWVuaW5nIG5lZ2F0aXYuIEVudGxhc3N1bmcgZ2VwbGFudCBhbSAyMC4xMC4yMDI2LiBNaXQgZnJldW5kbGljaGVuIGtvbGxlZ2lhbGVuIEdyw7zDn2VuLCBEci4gbWVkLiBUb2JpYXMgUmV1dGVyLCBPYmVyYXJ6dDsgTm9yYSBXaWVnYW5kLCBTdGF0aW9uc8Okcnp0aW4u"
+       }
+      }
+     ]
+    }
+   }
+  ]
+ }
+}

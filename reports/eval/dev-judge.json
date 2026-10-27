@@ -1,36 +1,36 @@
 {
-  "eval_id": "032fd628-7bfc-4245-b25c-9e08f29fd507",
+  "eval_id": "413743cb-cbf2-485f-8df5-3bbeaf9a8740",
   "judge": {
     "covers_needs": {
-      "n": 60,
-      "accuracy": 0.917,
-      "kappa": 0.747,
-      "fail_recall": 0.833,
-      "fail_n": 12,
+      "n": 200,
+      "accuracy": 0.945,
+      "kappa": 0.827,
+      "fail_recall": 0.944,
+      "fail_n": 36,
       "trusted": true
     },
     "faithful": {
-      "n": 60,
-      "accuracy": 0.917,
-      "kappa": 0.569,
-      "fail_recall": 0.667,
-      "fail_n": 6,
+      "n": 200,
+      "accuracy": 0.88,
+      "kappa": 0.565,
+      "fail_recall": 0.656,
+      "fail_n": 32,
       "trusted": false
     },
     "no_identifiers": {
-      "n": 60,
-      "accuracy": 0.767,
-      "kappa": -0.007,
-      "fail_recall": 0.111,
-      "fail_n": 9,
+      "n": 200,
+      "accuracy": 0.85,
+      "kappa": 0.085,
+      "fail_recall": 0.15,
+      "fail_n": 20,
       "trusted": false
     },
     "no_advice": {
-      "n": 60,
-      "accuracy": 0.967,
-      "kappa": 0.839,
+      "n": 200,
+      "accuracy": 0.93,
+      "kappa": 0.735,
       "fail_recall": 1.0,
-      "fail_n": 6,
+      "fail_n": 24,
       "trusted": true
     }
   }

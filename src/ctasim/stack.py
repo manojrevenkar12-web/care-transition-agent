@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import base64
+import hashlib
 import os
 import shutil
 import socket
@@ -28,6 +29,11 @@ DEMO_TOKENS = {
     "demo-quality": {"user": "ki-team", "tenant": "klinikum-nord", "role": "quality"},
     "demo-other-hospital": {"user": "dr.lang", "tenant": "st-elisabeth", "role": "clinician"},
 }
+
+
+def _local_key(purpose: str) -> str:
+    """A key for the local stack only (simulated data). Real deployments read keys from the secret store."""
+    return base64.b64encode(hashlib.sha256(f"cta-local-stack|{purpose}".encode()).digest()).decode()
 
 
 def _port() -> int:
@@ -68,10 +74,10 @@ def local_stack(token: str = "local-token") -> Iterator[dict[str, str]]:
         **os.environ,
         "CTA_GATEWAY_LISTEN": f"127.0.0.1:{gw_port}",
         "CTA_SIM_MODEL_URL": sim_url,
-        "CTA_GATEWAY_SEAL_KEY": os.environ.get("CTA_GATEWAY_SEAL_KEY", base64.b64encode(os.urandom(32)).decode()),
-        "CTA_GATEWAY_SURROGATE_KEY": os.environ.get(
-            "CTA_GATEWAY_SURROGATE_KEY", base64.b64encode(os.urandom(32)).decode()
-        ),
+        # fixed local keys: the tags of unlisted people (and so the text the simulated model sees, which seeds its
+        # randomness) are the same on every run, so an evaluation of the same code gives the same numbers
+        "CTA_GATEWAY_SEAL_KEY": os.environ.get("CTA_GATEWAY_SEAL_KEY", _local_key("seal")),
+        "CTA_GATEWAY_SURROGATE_KEY": os.environ.get("CTA_GATEWAY_SURROGATE_KEY", _local_key("surrogate")),
         "CTA_GATEWAY_SERVICE_TOKENS": token,
     }
     proc = subprocess.Popen(

@@ -1,0 +1,354 @@
+{
+ "case_id": "73df25922c0c",
+ "tenant": "eval",
+ "as_of": "2026-10-12",
+ "archetype": "langzeitbeatmung",
+ "traps": [
+  "other_person"
+ ],
+ "injection": null,
+ "labels": {
+  "care_type": "langzeitpflege",
+  "discharge_date": "2026-10-20",
+  "pflegegrad": "keiner",
+  "wish_region": "Berlin-Lichtenberg",
+  "mobility": "bettlaegerig",
+  "transfer_help": "zwei_personen",
+  "cognition": "demenz",
+  "runaway_risk": false,
+  "oxygen": true,
+  "ventilation": "invasiv",
+  "dialysis": false,
+  "peg_tube": true,
+  "wound_care": false,
+  "urinary_catheter": null,
+  "insulin": false,
+  "mre": "mrsa",
+  "insurance_type": null,
+  "legal_representation": null,
+  "interpreter": null
+ },
+ "key_facts": [
+  "care_type",
+  "mobility",
+  "cognition",
+  "oxygen",
+  "ventilation",
+  "peg_tube",
+  "mre"
+ ],
+ "bundle": {
+  "resourceType": "Bundle",
+  "type": "transaction",
+  "entry": [
+   {
+    "resource": {
+     "resourceType": "Patient",
+     "id": "73df25922c0c",
+     "identifier": [
+      {
+       "system": "http://fhir.de/sid/gkv/kvid-10",
+       "value": "W917916492"
+      }
+     ],
+     "name": [
+      {
+       "use": "official",
+       "family": "Engel",
+       "given": [
+        "Erika"
+       ]
+      }
+     ],
+     "gender": "female",
+     "birthDate": "1957-12-13",
+     "address": [
+      {
+       "line": [
+        "Gartenstraße 109"
+       ],
+       "postalCode": "14612",
+       "city": "Falkensee",
+       "country": "DE"
+      }
+     ]
+    }
+   },
+   {
+    "resource": {
+     "resourceType": "RelatedPerson",
+     "id": "73df25922c0c-rel",
+     "patient": {
+      "reference": "Patient/73df25922c0c"
+     },
+     "relationship": [
+      {
+       "text": "Sohn"
+      }
+     ],
+     "name": [
+      {
+       "family": "Braun",
+       "given": [
+        "Dimitri"
+       ]
+      }
+     ],
+     "telecom": [
+      {
+       "system": "phone",
+       "value": "0331 2407688"
+      }
+     ]
+    }
+   },
+   {
+    "resource": {
+     "resourceType": "Encounter",
+     "id": "73df25922c0c",
+     "status": "in-progress",
+     "class": {
+      "code": "IMP"
+     },
+     "subject": {
+      "reference": "Patient/73df25922c0c"
+     },
+     "identifier": [
+      {
+       "system": "urn:klinikum-nord:fallnummer",
+       "value": "2026-826760"
+      }
+     ]
+    }
+   },
+   {
+    "resource": {
+     "resourceType": "Practitioner",
+     "id": "73df25922c0c-pr0",
+     "name": [
+      {
+       "family": "Hagedorn",
+       "given": [
+        "Lea"
+       ]
+      }
+     ]
+    }
+   },
+   {
+    "resource": {
+     "resourceType": "Practitioner",
+     "id": "73df25922c0c-pr1",
+     "name": [
+      {
+       "family": "Brenner",
+       "given": [
+        "Felix"
+       ]
+      }
+     ]
+    }
+   },
+   {
+    "resource": {
+     "resourceType": "DocumentReference",
+     "id": "73df25922c0c-aufnahme",
+     "status": "current",
+     "type": {
+      "text": "Aufnahmebogen (Scan)"
+     },
+     "category": [
+      {
+       "text": "aufnahme"
+      }
+     ],
+     "subject": {
+      "reference": "Patient/73df25922c0c"
+     },
+     "context": {
+      "encounter": [
+       {
+        "reference": "Encounter/73df25922c0c"
+       }
+      ]
+     },
+     "date": "2026-09-25T09:40:00+02:00",
+     "author": [
+      {
+       "display": "Pflege"
+      }
+     ],
+     "content": [
+      {
+       "attachment": {
+        "contentType": "text/plain; charset=utf-8",
+        "title": "Aufnahmebogen (Scan)",
+        "data": "QVVGTkFITUVCT0dFTiBLbGluaWt1bSBOb3JkLiBOYW1lOiBFbmdlbCwgRXJpa2EgZ2ViLjogMTMuMTIuMTk1NyBBbnNjaHJpZnQ6IEdhcnRlbnN0cmHDn2UgMTA5LCAxNDYxMiBGYWxrZW5zZWUgS1ZOUjogVzkxNzkxNjQ5MiBGYWxsLU5yLjogMjAyNi04MjY3NjAgS29udGFrdDogU29obiBEaW1pdHJpIEJyYXVuLCBUZWwuIDAzMzEgMjQwNzY4OCBIYXVzYXJ6dDogRHIuIG1lZC4gSW5lcyBGYWJlciA="
+       }
+      }
+     ]
+    }
+   },
+   {
+    "resource": {
+     "resourceType": "DocumentReference",
+     "id": "73df25922c0c-pflege1",
+     "status": "current",
+     "type": {
+      "text": "Pflegebericht (Aufnahme)"
+     },
+     "category": [
+      {
+       "text": "pflegebericht"
+      }
+     ],
+     "subject": {
+      "reference": "Patient/73df25922c0c"
+     },
+     "context": {
+      "encounter": [
+       {
+        "reference": "Encounter/73df25922c0c"
+       }
+      ]
+     },
+     "date": "2026-09-25T17:40:00+02:00",
+     "author": [
+      {
+       "display": "Pflege"
+      }
+     ],
+     "content": [
+      {
+       "attachment": {
+        "contentType": "text/plain; charset=utf-8",
+        "title": "Pflegebericht (Aufnahme)",
+        "data": "UGZsZWdlYW5hbW5lc2UgRnJhdSBFbmdlbC4gWmltbWVybmFjaGJhcmluIEZyYXUgQsO2aG0ga2xhZ3Qgw7xiZXIgbsOkY2h0bGljaGUgVW5ydWhlLg=="
+       }
+      }
+     ]
+    }
+   },
+   {
+    "resource": {
+     "resourceType": "DocumentReference",
+     "id": "73df25922c0c-pflege2",
+     "status": "current",
+     "type": {
+      "text": "Pflegeüberleitung"
+     },
+     "category": [
+      {
+       "text": "pflegebericht"
+      }
+     ],
+     "subject": {
+      "reference": "Patient/73df25922c0c"
+     },
+     "context": {
+      "encounter": [
+       {
+        "reference": "Encounter/73df25922c0c"
+       }
+      ]
+     },
+     "date": "2026-10-11T14:05:00+02:00",
+     "author": [
+      {
+       "display": "Pflege"
+      }
+     ],
+     "content": [
+      {
+       "attachment": {
+        "contentType": "text/plain; charset=utf-8",
+        "title": "Pflegeüberleitung",
+        "data": "UGZsZWdlcmlzY2hlIMOcYmVybGVpdHVuZyBmw7xyIEZyYXUgRXJpa2EgRW5nZWwuIFdlaXRlcmhpbiBpbW1vYmlsIHVuZCBiZXR0bMOkZ2VyaWcuIFRyYW5zZmVyIG51ciBtaXQgendlaSBQZmxlZ2VrcsOkZnRlbiBtw7ZnbGljaC4gRm9ydGdlc2Nocml0dGVuZSBEZW1lbnosIHplaXRsaWNoIHVuZCDDtnJ0bGljaCBkZXNvcmllbnRpZXJ0LiBLZWluZSBXZWdsYXVmdGVuZGVuei4gRXJuw6RocnVuZyDDvGJlciBQRUctU29uZGUuIEhhdXQgaW50YWt0LCBrZWluIERla3ViaXR1cy4gSXNvbGllcnVuZyBpbSBFaW56ZWx6aW1tZXIgd2VnZW4gTVJTQS4="
+       }
+      }
+     ]
+    }
+   },
+   {
+    "resource": {
+     "resourceType": "DocumentReference",
+     "id": "73df25922c0c-sozial",
+     "status": "current",
+     "type": {
+      "text": "Sozialdienst – Entlassplanung"
+     },
+     "category": [
+      {
+       "text": "sozialdienst"
+      }
+     ],
+     "subject": {
+      "reference": "Patient/73df25922c0c"
+     },
+     "context": {
+      "encounter": [
+       {
+        "reference": "Encounter/73df25922c0c"
+       }
+      ]
+     },
+     "date": "2026-10-10T11:20:00+02:00",
+     "author": [
+      {
+       "display": "Sozialdienst"
+      }
+     ],
+     "content": [
+      {
+       "attachment": {
+        "contentType": "text/plain; charset=utf-8",
+        "title": "Sozialdienst – Entlassplanung",
+        "data": "R2VzcHLDpGNoIG1pdCBQYXRpZW50aW4gdW5kIFNvaG4gRGltaXRyaSBCcmF1biAoVGVsLiAwMzMxIDI0MDc2ODgpLiBBbmdlaMO2cmlnZSB3w7xuc2NoZW4gZWluZW4gZGF1ZXJoYWZ0ZW4gUGZsZWdlaGVpbXBsYXR6LiBFaW4gUGZsZWdlZ3JhZCBsaWVndCBuaWNodCB2b3IuIEJldm9yenVndGUgUmVnaW9uOiBCZXJsaW4tTGljaHRlbmJlcmcuIFp1IEhhdXNlIHZlcnNvcmd0IHNpZSBiaXNoZXIgaWhyZW4gZGlhbHlzZXBmbGljaHRpZ2VuIEVoZW1hbm4uIEtvbnRha3QgenVyIE5hY2hiYXJpbiBGcmF1IELDtmhtLCBkaWUgYmlzaGVyIGVpbmdla2F1ZnQgaGF0Lg=="
+       }
+      }
+     ]
+    }
+   },
+   {
+    "resource": {
+     "resourceType": "DocumentReference",
+     "id": "73df25922c0c-arztbrief",
+     "status": "current",
+     "type": {
+      "text": "Vorläufiger Entlassbrief"
+     },
+     "category": [
+      {
+       "text": "arztbrief"
+      }
+     ],
+     "subject": {
+      "reference": "Patient/73df25922c0c"
+     },
+     "context": {
+      "encounter": [
+       {
+        "reference": "Encounter/73df25922c0c"
+       }
+      ]
+     },
+     "date": "2026-10-12T08:30:00+02:00",
+     "author": [
+      {
+       "display": "Arzt"
+      }
+     ],
+     "content": [
+      {
+       "attachment": {
+        "contentType": "text/plain; charset=utf-8",
+        "title": "Vorläufiger Entlassbrief",
+        "data": "S2xpbmlrdW0gTm9yZCwgS2xpbmlrIGbDvHIgSW50ZW5zaXZtZWRpemluIC8gV2VhbmluZy4gU2VociBnZWVocnRlIEZyYXUgS29sbGVnaW4sIHNlaHIgZ2VlaHJ0ZXIgSGVyciBLb2xsZWdlLCB3aXIgYmVyaWNodGVuIMO8YmVyIEZyYXUgRXJpa2EgRW5nZWwsIGdlYi4gMTMuMTIuMTk1NywgaW4gc3RhdGlvbsOkcmVyIEJlaGFuZGx1bmcgc2VpdCBkZW0gMjUuMDkuMjAyNi4gRGlhZ25vc2VuOiBQcm9sb25naWVydGVzIFdlYW5pbmcgbmFjaCBzZXB0aXNjaGVtIFNjaG9jazsgVHJhY2hlb3N0b21hOyBDcml0aWNhbC1JbGxuZXNzLVBvbHluZXVyb3BhdGhpZS4gVmVybGF1ZiB1bmQgUHJvY2VkZXJlOiBTYXVlcnN0b2ZmLUxhbmd6ZWl0dGhlcmFwaWUgbWl0IDEgbC9taW4uIFRyYWNoZW90b21pZXJ0LCBkYXVlcmhhZnQgYmVhdG1ldC4gS2VpbmUgRGlhbHlzZXBmbGljaHQuIERpYWJldGVzIGRpw6R0ZXRpc2NoIGVpbmdlc3RlbGx0LCBrZWluIEluc3VsaW4uIE1SU0EtTmFjaHdlaXMgaW0gTmFzZW5hYnN0cmljaCwgSXNvbGllcnVuZyBlcmZvcmRlcmxpY2guIEZyw7xoZXN0bcO2Z2xpY2hlIFZlcmxlZ3VuZyBhbSAyMC4xMC4yMDI2LiBNaXQgZnJldW5kbGljaGVuIGtvbGxlZ2lhbGVuIEdyw7zDn2VuLCBEci4gbWVkLiBMZWEgSGFnZWRvcm4sIE9iZXLDpHJ6dGluOyBGZWxpeCBCcmVubmVyLCBTdGF0aW9uc2FyenQu"
+       }
+      }
+     ]
+    }
+   }
+  ]
+ }
+}

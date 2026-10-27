@@ -1,0 +1,391 @@
+{
+ "case_id": "cc0104172400",
+ "tenant": "eval",
+ "as_of": "2026-10-12",
+ "archetype": "schlaganfall",
+ "traps": [
+  "unlisted_relative",
+  "dictation"
+ ],
+ "injection": null,
+ "labels": {
+  "care_type": "langzeitpflege",
+  "discharge_date": "2026-10-20",
+  "pflegegrad": "keiner",
+  "wish_region": null,
+  "mobility": "rollstuhl",
+  "transfer_help": null,
+  "cognition": "orientiert",
+  "runaway_risk": null,
+  "oxygen": false,
+  "ventilation": "keine",
+  "dialysis": true,
+  "peg_tube": null,
+  "wound_care": null,
+  "urinary_catheter": false,
+  "insulin": null,
+  "mre": "keine",
+  "insurance_type": "gkv",
+  "legal_representation": "gesetzliche_betreuung",
+  "interpreter": null
+ },
+ "key_facts": [
+  "care_type",
+  "mobility",
+  "dialysis"
+ ],
+ "bundle": {
+  "resourceType": "Bundle",
+  "type": "transaction",
+  "entry": [
+   {
+    "resource": {
+     "resourceType": "Patient",
+     "id": "cc0104172400",
+     "identifier": [
+      {
+       "system": "http://fhir.de/sid/gkv/kvid-10",
+       "value": "X883358614"
+      }
+     ],
+     "name": [
+      {
+       "use": "official",
+       "family": "Köhler",
+       "given": [
+        "Klaus"
+       ]
+      }
+     ],
+     "gender": "male",
+     "birthDate": "1957-04-15",
+     "address": [
+      {
+       "line": [
+        "Hauptstraße 38"
+       ],
+       "postalCode": "14612",
+       "city": "Falkensee",
+       "country": "DE"
+      }
+     ]
+    }
+   },
+   {
+    "resource": {
+     "resourceType": "RelatedPerson",
+     "id": "cc0104172400-rel",
+     "patient": {
+      "reference": "Patient/cc0104172400"
+     },
+     "relationship": [
+      {
+       "text": "Tochter"
+      }
+     ],
+     "name": [
+      {
+       "family": "Haas",
+       "given": [
+        "Claudia"
+       ]
+      }
+     ],
+     "telecom": [
+      {
+       "system": "phone",
+       "value": "0171 7265886"
+      }
+     ]
+    }
+   },
+   {
+    "resource": {
+     "resourceType": "Encounter",
+     "id": "cc0104172400",
+     "status": "in-progress",
+     "class": {
+      "code": "IMP"
+     },
+     "subject": {
+      "reference": "Patient/cc0104172400"
+     },
+     "identifier": [
+      {
+       "system": "urn:klinikum-nord:fallnummer",
+       "value": "2026-286178"
+      }
+     ]
+    }
+   },
+   {
+    "resource": {
+     "resourceType": "Practitioner",
+     "id": "cc0104172400-pr0",
+     "name": [
+      {
+       "family": "Weber",
+       "given": [
+        "Jonas"
+       ]
+      }
+     ]
+    }
+   },
+   {
+    "resource": {
+     "resourceType": "Practitioner",
+     "id": "cc0104172400-pr1",
+     "name": [
+      {
+       "family": "Hagedorn",
+       "given": [
+        "Lea"
+       ]
+      }
+     ]
+    }
+   },
+   {
+    "resource": {
+     "resourceType": "DocumentReference",
+     "id": "cc0104172400-aufnahme",
+     "status": "current",
+     "type": {
+      "text": "Aufnahmebogen (Scan)"
+     },
+     "category": [
+      {
+       "text": "aufnahme"
+      }
+     ],
+     "subject": {
+      "reference": "Patient/cc0104172400"
+     },
+     "context": {
+      "encounter": [
+       {
+        "reference": "Encounter/cc0104172400"
+       }
+      ]
+     },
+     "date": "2026-10-06T09:40:00+02:00",
+     "author": [
+      {
+       "display": "Pflege"
+      }
+     ],
+     "content": [
+      {
+       "attachment": {
+        "contentType": "text/plain; charset=utf-8",
+        "title": "Aufnahmebogen (Scan)",
+        "data": "QVVGTkFITUVCT0dFTiBLbGluaWt1bSBOb3JkLiBOYW1lOiBLw7ZobGVyLCBLbGF1cyBnZWIuOiAxNS4wNC4xOTU3IEFuc2NocmlmdDogSGF1cHRzdHJhw59lIDM4LCAxNDYxMiBGYWxrZW5zZWUgS1ZOUjogWDg4MzM1ODYxNCBGYWxsLU5yLjogMjAyNi0yODYxNzggS29udGFrdDogVG9jaHRlciBDbGF1ZGlhIEhhYXMsIFRlbC4gMDE3MSA3MjY1ODg2IEhhdXNhcnp0OiBEci4gbWVkLiBJbmVzIEZhYmVyIEtyYW5rZW5rYXNzZTogS0tILg=="
+       }
+      }
+     ]
+    }
+   },
+   {
+    "resource": {
+     "resourceType": "DocumentReference",
+     "id": "cc0104172400-pflege1",
+     "status": "current",
+     "type": {
+      "text": "Pflegebericht (Aufnahme)"
+     },
+     "category": [
+      {
+       "text": "pflegebericht"
+      }
+     ],
+     "subject": {
+      "reference": "Patient/cc0104172400"
+     },
+     "context": {
+      "encounter": [
+       {
+        "reference": "Encounter/cc0104172400"
+       }
+      ]
+     },
+     "date": "2026-10-06T17:40:00+02:00",
+     "author": [
+      {
+       "display": "Pflege"
+      }
+     ],
+     "content": [
+      {
+       "attachment": {
+        "contentType": "text/plain; charset=utf-8",
+        "title": "Pflegebericht (Aufnahme)",
+        "data": "UGZsZWdlYW5hbW5lc2UgSGVyciBLw7ZobGVyLiBaaW1tZXJuYWNoYmFyaW4gRnJhdSBIYXJ0bWFubiBrbGFndCDDvGJlciBuw6RjaHRsaWNoZSBVbnJ1aGUu"
+       }
+      }
+     ]
+    }
+   },
+   {
+    "resource": {
+     "resourceType": "DocumentReference",
+     "id": "cc0104172400-pflege2",
+     "status": "current",
+     "type": {
+      "text": "Pflegeüberleitung"
+     },
+     "category": [
+      {
+       "text": "pflegebericht"
+      }
+     ],
+     "subject": {
+      "reference": "Patient/cc0104172400"
+     },
+     "context": {
+      "encounter": [
+       {
+        "reference": "Encounter/cc0104172400"
+       }
+      ]
+     },
+     "date": "2026-10-11T14:05:00+02:00",
+     "author": [
+      {
+       "display": "Pflege"
+      }
+     ],
+     "content": [
+      {
+       "attachment": {
+        "contentType": "text/plain; charset=utf-8",
+        "title": "Pflegeüberleitung",
+        "data": "UGZsZWdlcmlzY2hlIMOcYmVybGVpdHVuZyBmw7xyIEhlcnJuIEtsYXVzIEvDtmhsZXIuIFJvbGxzdHVobG1vYmlsLCBHZWhlbiBuaWNodCBtw7ZnbGljaC4gWmVpdGxpY2gsIMO2cnRsaWNoIHVuZCB6dXIgUGVyc29uIG9yaWVudGllcnQuIFNwb250YW5taWt0aW9uLCBrZWluIERLLg=="
+       }
+      }
+     ]
+    }
+   },
+   {
+    "resource": {
+     "resourceType": "DocumentReference",
+     "id": "cc0104172400-sozial",
+     "status": "current",
+     "type": {
+      "text": "Sozialdienst – Entlassplanung"
+     },
+     "category": [
+      {
+       "text": "sozialdienst"
+      }
+     ],
+     "subject": {
+      "reference": "Patient/cc0104172400"
+     },
+     "context": {
+      "encounter": [
+       {
+        "reference": "Encounter/cc0104172400"
+       }
+      ]
+     },
+     "date": "2026-10-10T11:20:00+02:00",
+     "author": [
+      {
+       "display": "Sozialdienst"
+      }
+     ],
+     "content": [
+      {
+       "attachment": {
+        "contentType": "text/plain; charset=utf-8",
+        "title": "Sozialdienst – Entlassplanung",
+        "data": "R2VzcHLDpGNoIG1pdCBQYXRpZW50IHVuZCBUb2NodGVyIENsYXVkaWEgSGFhcyAoVGVsLiAwMTcxIDcyNjU4ODYpLiBEaWUgVmVyc29yZ3VuZyB6dSBIYXVzZSBpc3QgbmljaHQgbWVociBzaWNoZXJnZXN0ZWxsdCwgSGVpbWF1Zm5haG1lICh2b2xsc3RhdGlvbsOkcikgZ2V3w7xuc2NodC4gQmlzaGVyIGtlaW4gUGZsZWdlZ3JhZCB2b3JoYW5kZW4uIEVzIGJlc3RlaHQgZWluZSByZWNodGxpY2hlIEJldHJldXVuZyAoQW10c2dlcmljaHQpLiBLb250YWt0IHp1ciBOYWNoYmFyaW4gRnJhdSBXb2xmZiwgZGllIGJpc2hlciBlaW5nZWthdWZ0IGhhdC4gQXVjaCBkZXIgU29obiBNdXJhdCBLw7ZobGVyIG3DtmNodGUgaW5mb3JtaWVydCB3ZXJkZW4u"
+       }
+      }
+     ]
+    }
+   },
+   {
+    "resource": {
+     "resourceType": "DocumentReference",
+     "id": "cc0104172400-arztbrief",
+     "status": "current",
+     "type": {
+      "text": "Vorläufiger Entlassbrief"
+     },
+     "category": [
+      {
+       "text": "arztbrief"
+      }
+     ],
+     "subject": {
+      "reference": "Patient/cc0104172400"
+     },
+     "context": {
+      "encounter": [
+       {
+        "reference": "Encounter/cc0104172400"
+       }
+      ]
+     },
+     "date": "2026-10-12T08:30:00+02:00",
+     "author": [
+      {
+       "display": "Arzt"
+      }
+     ],
+     "content": [
+      {
+       "attachment": {
+        "contentType": "text/plain; charset=utf-8",
+        "title": "Vorläufiger Entlassbrief",
+        "data": "S2xpbmlrdW0gTm9yZCwgS2xpbmlrIGbDvHIgTmV1cm9sb2dpZS4gU2VociBnZWVocnRlIEZyYXUgS29sbGVnaW4sIHNlaHIgZ2VlaHJ0ZXIgSGVyciBLb2xsZWdlLCB3aXIgYmVyaWNodGVuIMO8YmVyIEhlcnJuIEtsYXVzIEvDtmhsZXIsIGdlYi4gMTUuMDQuMTk1NywgaW4gc3RhdGlvbsOkcmVyIEJlaGFuZGx1bmcgc2VpdCBkZW0gMDYuMTAuMjAyNi4gRGlhZ25vc2VuOiBJc2Now6RtaXNjaGVyIEhpcm5pbmZhcmt0IGltIE1lZGlhc3Ryb21nZWJpZXQgbGlua3MgKEk2My40KTsgSGVtaXBhcmVzZSByZWNodHM7IER5c3BoYWdpZS4gVmVybGF1ZiB1bmQgUHJvY2VkZXJlOiBLZWluIFNhdWVyc3RvZmZiZWRhcmYuIEVpbmUgQmVhdG11bmdzcGZsaWNodCBiZXN0ZWh0IG5pY2h0LiBIw6Rtb2RpYWx5c2UgZHJlaW1hbCB3w7ZjaGVudGxpY2guIE1SRS1TY3JlZW5pbmcgbmVnYXRpdi4gQW5nZWjDtnJpZ2Ugd8O8bnNjaGVuIGVpbmVuIGRhdWVyaGFmdGVuIFBmbGVnZWhlaW1wbGF0ei4gRW50bGFzc3VuZyBnZXBsYW50IGFtIDIwLjEwLjIwMjYuIE1pdCBmcmV1bmRsaWNoZW4ga29sbGVnaWFsZW4gR3LDvMOfZW4sIERyLiBtZWQuIEpvbmFzIFdlYmVyLCBPYmVyYXJ6dDsgTGVhIEhhZ2Vkb3JuLCBTdGF0aW9uc8Okcnp0aW4u"
+       }
+      }
+     ]
+    }
+   },
+   {
+    "resource": {
+     "resourceType": "DocumentReference",
+     "id": "cc0104172400-diktat",
+     "status": "current",
+     "type": {
+      "text": "Diktat Übergabe (Spracherkennung)"
+     },
+     "category": [
+      {
+       "text": "diktat"
+      }
+     ],
+     "subject": {
+      "reference": "Patient/cc0104172400"
+     },
+     "context": {
+      "encounter": [
+       {
+        "reference": "Encounter/cc0104172400"
+       }
+      ]
+     },
+     "date": "2026-10-12T07:15:00+02:00",
+     "author": [
+      {
+       "display": "Pflege"
+      }
+     ],
+     "content": [
+      {
+       "attachment": {
+        "contentType": "text/plain; charset=utf-8",
+        "title": "Diktat Übergabe (Spracherkennung)",
+        "data": "amEgYWxzbyDDvGJlcmdhYmUgaGVyciBrw7ZobGVyIMOkaCByb2xsc3R1aGxtb2JpbCwgZ2VoZW4gbmljaHQgbcO2Z2xpY2ggemVpdGxpY2gsIMO2cnRsaWNoIHVuZCB6dXIgcGVyc29uIG9yaWVudGllcnQgc3BvbnRhbm1pa3Rpb24sIGtlaW4gZGsgYW5nZWjDtnJpZ2UgY2xhdWRpYSBoYWFzIGluZm9ybWllcnQ="
+       }
+      }
+     ]
+    }
+   }
+  ]
+ }
+}
