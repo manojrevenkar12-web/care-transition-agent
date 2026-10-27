@@ -1,0 +1,33 @@
+# Who may do what in the API. A user is a bearer token mapped to (user, tenant, role) in the environment variable
+# named by tokens_env (JSON: {"<token>": {"user": "dr.weber", "tenant": "klinikum-nord", "role": "clinician"}}).
+# In production the token comes from the hospital's identity provider via the ingress; the mapping is the same.
+tokens_env: CTA_API_TOKENS
+
+roles:
+  clinician:            # ward physician or nurse in charge: reviews and releases
+    - cases.read
+    - cases.import
+    - documents.original
+    - drafts.run
+    - drafts.review
+    - drafts.release
+    - chat
+    - runs.read
+  coordinator:          # social services / discharge management: prepares, cannot release
+    - cases.read
+    - cases.import
+    - documents.original
+    - drafts.run
+    - drafts.review
+    - chat
+    - runs.read
+  quality:              # the AI team: quality, traces and prompts; never document text
+    - cases.read
+    - runs.read
+    - quality.read
+    - prompts.read
+    - prompts.deploy
+    - audit.verify
+
+# Upload limit for a FHIR Bundle, in bytes.
+max_bundle_bytes: 5000000

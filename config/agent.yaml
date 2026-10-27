@@ -1,0 +1,21 @@
+# The agent's settings (src/cta/agent). Models are logical names the gateway maps to an approved upstream per tenant
+# (config/gateway.json): "claude-sonnet" goes to Bedrock in Frankfurt for hospital tenants; "sim-careful" is the
+# simulated model used in tests, seasons and the offline evaluation.
+defaults:
+  profile_drafter: {version: v2, model: sim-careful}
+  router: {version: v1, model: sim-careful}
+  case_chat: {version: v1, model: sim-careful}
+  summary_judge: {version: v1, model: sim-careful}
+limits:
+  max_model_calls: 10
+  max_tool_calls: 90
+  max_output_tokens: 4000
+  max_input_tokens: 30000      # estimated as characters / 3.5 before each call
+  run_seconds: 180
+context:
+  read_chunk_chars: 6000       # read_document returns at most this much per call
+  compact_after_turns: 4       # older document reads are replaced by a note after this many model turns
+  search_top_k: 6
+canary:
+  # a prompt version in canary serves this share of a tenant's cases, chosen by a hash of the case id
+  default_share: 0.2

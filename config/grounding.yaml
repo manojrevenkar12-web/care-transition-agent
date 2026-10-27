@@ -1,0 +1,102 @@
+# How the verifier (src/cta/grounding.py) decides whether a quoted sentence supports a field value. Written from
+# clinical German, not from the simulator's phrase bank. Patterns are regular expressions matched on lower-cased text.
+#
+# concept: what the field is about. For booleans, a concept that is not negated supports true, a negated one supports
+# false. For enums, each option has its own patterns; "keine" is supported by a negated concept or a none-pattern.
+# A negation cue counts when it is within `window` tokens before the concept, or one of the trailing cues is within
+# `window` tokens after it ("MRSA-Abstrich negativ", "ist nicht erforderlich"), unless another field's concept stands
+# between them ("kein Dekubitus, suprapubischer Katheter" does not negate the catheter).
+
+negation:
+  before: [kein, keine, keinen, keiner, keines, nicht, ohne, nie, weder, verneint, ausgeschlossen]
+  after: [negativ, negative, nicht, entfällt, ausgeschlossen, verneint, saniert, sanierung, beendet, abgesetzt]
+  window: 4
+  # a cue followed by one of these negates that word, not what comes after ("gehen nicht möglich, transfer mit ...")
+  closers: [möglich, erforderlich, nötig, notwendig, vorhanden, bekannt, gegeben, mehr]
+  # a clause that resolves an earlier positive ("nach Sanierung negativ") reads as negation of the concept
+spoken_numbers: {eins: 1, zwei: 2, drei: 3, vier: 4, fünf: 5}
+
+fields:
+  care_type:
+    options:
+      kurzzeitpflege: ['kurzzeitpflege']
+      langzeitpflege: ['vollstationär', 'dauerpflege', 'pflegeheimplatz', 'heimaufnahme', 'langzeitpflege', 'dauerhafte[nrm]? (pflege)?heim']
+      ambulante_pflege: ['ambulante[nrm]? pflegedienst', 'ambulante versorgung', 'häusliche krankenpflege']
+      geriatrische_reha: ['geriatrische[nrm]? (früh)?reha', 'geriatrische[nrm]? rehaklinik', 'geriatrische[nr]? (früh)?rehabilitation']
+      anschlussreha: ['anschlussheilbehandlung', '\bahb\b', 'anschlussreha']
+      hospiz: ['hospiz']
+  pflegegrad:
+    special: pflegegrad
+  mobility:
+    options:
+      selbststaendig: ['selbstst?ändig mobil', 'geht selbstst?ändig', 'ohne hilfsmittel', 'frei gehfähig']
+      rollator: ['rollator']
+      rollstuhl: ['rollstuhl']
+      bettlaegerig: ['bettlägerig', '\bimmobil\b']
+  transfer_help:
+    options:
+      keine: ['transfer[^.]{0,30}selbstst?ändig', 'selbstst?ändige[rn]? transfer']
+      eine_person: ['(einer|1) (pflegekraft|person|pflegeperson)', 'hilfe einer']
+      zwei_personen: ['(zwei|2) (pflegekräfte|pflegekräften|personen|pflegepersonen)']
+  cognition:
+    options:
+      orientiert: ['(?<!des)orientiert', 'kognitiv unauffällig']
+      leicht_eingeschraenkt: ['leichte[nr]? kognitive', 'kognitiv leicht', 'teilweise desorientiert', 'leicht eingeschränkt']
+      demenz: ['demenz', '\bdement']
+  runaway_risk:
+    concept: ['weglauftendenz', 'hinlauftendenz', 'umherwander', 'beschützte[nrm]? (bereich|station|wohnbereich)']
+  oxygen:
+    concept: ['sauerstoff', '\bo2\b', 'nasenbrille', 'l/min', 'liter pro minute']
+    false_patterns: ['unter raumluft']
+  ventilation:
+    concept: ['beatmung', 'beatmet', '\bniv\b', 'tracheostoma', 'tracheotomiert']
+    options:
+      nicht_invasiv: ['\bniv\b', 'nicht-invasiv', 'maskenbeatmung', 'über maske']
+      invasiv: ['tracheostoma', 'tracheotomiert', 'invasive[nr]? (heim)?beatmung']
+  dialysis:
+    concept: ['dialyse', 'dialysepflicht', 'hämodialyse', 'peritonealdialyse', '\bshunt\b']
+  peg_tube:
+    concept: ['\bpeg\b', 'peg-sonde', 'sondenkost', 'sondenernährung', 'magensonde']
+  wound_care:
+    concept: ['wunde', 'dekubitus', 'verbandswechsel', 'wundversorgung', 'ulcus', 'ulkus']
+    false_patterns: ['haut intakt']
+  urinary_catheter:
+    concept: ['katheter', '\bdk\b', 'blasenverweil']
+    false_patterns: ['spontanmiktion']
+  insulin:
+    concept: ['insulin']
+  mre:
+    concept: ['mrsa', '3-?mrgn', '4-?mrgn', '\bvre\b', 'multiresistent', '\bmre\b']
+    options:
+      mrsa: ['mrsa']
+      3mrgn: ['3-?mrgn']
+      4mrgn: ['4-?mrgn']
+      vre: ['\bvre\b']
+  insurance_type:
+    options:
+      gkv: ['\baok\b', 'techniker', '\btk\b', 'barmer', '\bdak\b', '\bikk\b', '\bkkh\b', '\bbkk\b', 'knappschaft', 'gesetzlich versichert', '\bgkv\b', 'krankenkasse']
+      pkv: ['privat versichert', '\bpkv\b', 'debeka', 'signal iduna', '\baxa\b', 'allianz private', 'privatpatient']
+  legal_representation:
+    concept: ['vorsorgevollmacht', 'bevollmächtigt', 'betreuung', 'betreuer', 'vollmacht']
+    options:
+      vorsorgevollmacht: ['vorsorgevollmacht', 'bevollmächtigt']
+      gesetzliche_betreuung: ['(gesetzliche|rechtliche) betreuung', 'betreuer(in)?\b', 'betreuung (für|ist eingerichtet)']
+    none_patterns: ['entscheidet selbst']
+  interpreter:
+    text_context: ['spricht', 'dolmetsch', 'übersetz', 'sprache', 'verständigung']
+  wish_region:
+    text_context: ['wunsch', 'bevorzugt', 'möchte', 'nähe', 'region', 'wohnort']
+  discharge_date:
+    special: date
+    text_context: ['entlass', 'verlegung', 'aufnahmetermin', 'überleitung', 'entlassdatum']
+
+# Sentences that are not about the patient as they are now: a relative as the subject, or a past condition ("Z.n.").
+# They do not support a value; a quote from one is "unsupported". Deliberately narrow (sentence start only).
+not_about_patient:
+  - '^\s*(der|die|ihr|sein|seine|ihre)\s+(ehemann|ehefrau|ehepartner\w*|lebensgefährt\w*|tochter|sohn|schwester|bruder|mutter|vater|enkel\w*)\b'
+  - '^\s*z\.\s?n\.'
+  - '^\s*(zustand nach|anamnestisch)\b'
+
+# A later statement about a field that supports a different value makes the earlier one stale; the verifier marks
+# the field "conflict" and shows both. Statements in the same document are ordered by position.
+conflict_check: true

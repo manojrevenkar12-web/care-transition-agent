@@ -1,0 +1,20 @@
+# Offline evaluation and the release gate for a prompt or model change (src/cta/evaluation.py).
+offline:
+  tenant: eval                 # golden cases are loaded into this tenant, which serves no hospital
+  bootstrap_samples: 2000
+  confidence: 0.95
+gate:
+  # a candidate (prompt version @ model) replaces the baseline only if, on the golden set:
+  max_major_wrong_ready: 0             # no major-severity field may be wrong yet marked ready
+  max_wrong_ready_rate_increase: 0.0   # wrong-but-ready fields may not become more common
+  accuracy_margin: 0.01                # field accuracy not worse by more than 1 point (lower bound of the paired interval)
+  max_review_load_increase: 0.05       # share of fields a clinician must touch, at most +5 points
+  max_token_increase: 0.30             # tokens per case at most +30 %
+  pii_leaks: 0                         # requests the gateway refused for a surviving identifier
+judge:
+  min_kappa: 0.6                       # a judge criterion is trusted for gating only above this agreement with clinicians
+online:
+  window_days: 7
+  min_fields: 200
+  alert_drop: 0.05                     # alert when acceptance of ready fields drops by 5 points vs the previous window
+  alert_p: 0.01

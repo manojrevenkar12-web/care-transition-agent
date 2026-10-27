@@ -1,0 +1,391 @@
+{
+ "case_id": "1ee260130571",
+ "tenant": "eval",
+ "as_of": "2026-10-12",
+ "archetype": "langzeitbeatmung",
+ "traps": [
+  "dictation"
+ ],
+ "injection": null,
+ "labels": {
+  "care_type": "langzeitpflege",
+  "discharge_date": null,
+  "pflegegrad": "pg4",
+  "wish_region": "Berlin-Charlottenburg",
+  "mobility": "bettlaegerig",
+  "transfer_help": "zwei_personen",
+  "cognition": "orientiert",
+  "runaway_risk": null,
+  "oxygen": true,
+  "ventilation": "invasiv",
+  "dialysis": false,
+  "peg_tube": null,
+  "wound_care": null,
+  "urinary_catheter": null,
+  "insulin": false,
+  "mre": "keine",
+  "insurance_type": "gkv",
+  "legal_representation": "keine",
+  "interpreter": null
+ },
+ "key_facts": [
+  "care_type",
+  "mobility",
+  "oxygen",
+  "ventilation"
+ ],
+ "bundle": {
+  "resourceType": "Bundle",
+  "type": "transaction",
+  "entry": [
+   {
+    "resource": {
+     "resourceType": "Patient",
+     "id": "1ee260130571",
+     "identifier": [
+      {
+       "system": "http://fhir.de/sid/gkv/kvid-10",
+       "value": "U388053888"
+      }
+     ],
+     "name": [
+      {
+       "use": "official",
+       "family": "Haas",
+       "given": [
+        "Gerhard"
+       ]
+      }
+     ],
+     "gender": "male",
+     "birthDate": "1949-08-18",
+     "address": [
+      {
+       "line": [
+        "Fontanestraße 75"
+       ],
+       "postalCode": "14612",
+       "city": "Falkensee",
+       "country": "DE"
+      }
+     ]
+    }
+   },
+   {
+    "resource": {
+     "resourceType": "RelatedPerson",
+     "id": "1ee260130571-rel",
+     "patient": {
+      "reference": "Patient/1ee260130571"
+     },
+     "relationship": [
+      {
+       "text": "Sohn"
+      }
+     ],
+     "name": [
+      {
+       "family": "Haas",
+       "given": [
+        "Jens"
+       ]
+      }
+     ],
+     "telecom": [
+      {
+       "system": "phone",
+       "value": "0152 1553600"
+      }
+     ]
+    }
+   },
+   {
+    "resource": {
+     "resourceType": "Encounter",
+     "id": "1ee260130571",
+     "status": "in-progress",
+     "class": {
+      "code": "IMP"
+     },
+     "subject": {
+      "reference": "Patient/1ee260130571"
+     },
+     "identifier": [
+      {
+       "system": "urn:klinikum-nord:fallnummer",
+       "value": "2026-100888"
+      }
+     ]
+    }
+   },
+   {
+    "resource": {
+     "resourceType": "Practitioner",
+     "id": "1ee260130571-pr0",
+     "name": [
+      {
+       "family": "Wiegand",
+       "given": [
+        "Nora"
+       ]
+      }
+     ]
+    }
+   },
+   {
+    "resource": {
+     "resourceType": "Practitioner",
+     "id": "1ee260130571-pr1",
+     "name": [
+      {
+       "family": "Reuter",
+       "given": [
+        "Tobias"
+       ]
+      }
+     ]
+    }
+   },
+   {
+    "resource": {
+     "resourceType": "DocumentReference",
+     "id": "1ee260130571-aufnahme",
+     "status": "current",
+     "type": {
+      "text": "Aufnahmebogen (Scan)"
+     },
+     "category": [
+      {
+       "text": "aufnahme"
+      }
+     ],
+     "subject": {
+      "reference": "Patient/1ee260130571"
+     },
+     "context": {
+      "encounter": [
+       {
+        "reference": "Encounter/1ee260130571"
+       }
+      ]
+     },
+     "date": "2026-10-04T09:40:00+02:00",
+     "author": [
+      {
+       "display": "Pflege"
+      }
+     ],
+     "content": [
+      {
+       "attachment": {
+        "contentType": "text/plain; charset=utf-8",
+        "title": "Aufnahmebogen (Scan)",
+        "data": "QVVGTkFITUVCT0dFTiBLMWluaWt1bSBOb3JkLiBOYW1lOiBIYWFzLCBHZXJoYXJkIGdlYi46IDE4LjA4LjE5NDkgQW5zY2hyaWZ0OiBGb250YW5lc3RyYcOfZSA3NSwgMTQ2MTIgRmFsa2Vuc2VlIEtWTlI6IFUzODgwNTM4ODggRmFsbC1Oci46IDIwMjYtMTAwODg4IEtvbnRha3Q6IFNvaG4gSmVucyBIYWFzLCBUZWwuIDAxNTIgMTU1MzYwMCBIYXVzYXJ6dDogRHIuIG1lZC4gVWxyaWtlIFNhbmRlciBLb3N0ZW50csOkZ2VyOiBUZWNobmlrZXIgS3Jhbmtlbmthc3NlLg=="
+       }
+      }
+     ]
+    }
+   },
+   {
+    "resource": {
+     "resourceType": "DocumentReference",
+     "id": "1ee260130571-pflege1",
+     "status": "current",
+     "type": {
+      "text": "Pflegebericht (Aufnahme)"
+     },
+     "category": [
+      {
+       "text": "pflegebericht"
+      }
+     ],
+     "subject": {
+      "reference": "Patient/1ee260130571"
+     },
+     "context": {
+      "encounter": [
+       {
+        "reference": "Encounter/1ee260130571"
+       }
+      ]
+     },
+     "date": "2026-10-04T17:40:00+02:00",
+     "author": [
+      {
+       "display": "Pflege"
+      }
+     ],
+     "content": [
+      {
+       "attachment": {
+        "contentType": "text/plain; charset=utf-8",
+        "title": "Pflegebericht (Aufnahme)",
+        "data": "UGZsZWdlYW5hbW5lc2UgSGVyciBIYWFzLiBaaW1tZXJuYWNoYmFyaW4gRnJhdSBOb3dhayBrbGFndCDDvGJlciBuw6RjaHRsaWNoZSBVbnJ1aGUu"
+       }
+      }
+     ]
+    }
+   },
+   {
+    "resource": {
+     "resourceType": "DocumentReference",
+     "id": "1ee260130571-pflege2",
+     "status": "current",
+     "type": {
+      "text": "Pflegeüberleitung"
+     },
+     "category": [
+      {
+       "text": "pflegebericht"
+      }
+     ],
+     "subject": {
+      "reference": "Patient/1ee260130571"
+     },
+     "context": {
+      "encounter": [
+       {
+        "reference": "Encounter/1ee260130571"
+       }
+      ]
+     },
+     "date": "2026-10-11T14:05:00+02:00",
+     "author": [
+      {
+       "display": "Pflege"
+      }
+     ],
+     "content": [
+      {
+       "attachment": {
+        "contentType": "text/plain; charset=utf-8",
+        "title": "Pflegeüberleitung",
+        "data": "UGZsZWdlcmlzY2hlIMOcYmVybGVpdHVuZyBmw7xyIEhlcnJuIEdlcmhhcmQgSGFhcy4gVm9sbHN0w6RuZGlnIGJldHRsw6RnZXJpZy4gVHJhbnNmZXIgbnVyIG1pdCB6d2VpIFBmbGVnZWtyw6RmdGVuIG3DtmdsaWNoLiBaZWl0bGljaCwgw7ZydGxpY2ggdW5kIHp1ciBQZXJzb24gb3JpZW50aWVydC4="
+       }
+      }
+     ]
+    }
+   },
+   {
+    "resource": {
+     "resourceType": "DocumentReference",
+     "id": "1ee260130571-sozial",
+     "status": "current",
+     "type": {
+      "text": "Sozialdienst – Entlassplanung"
+     },
+     "category": [
+      {
+       "text": "sozialdienst"
+      }
+     ],
+     "subject": {
+      "reference": "Patient/1ee260130571"
+     },
+     "context": {
+      "encounter": [
+       {
+        "reference": "Encounter/1ee260130571"
+       }
+      ]
+     },
+     "date": "2026-10-10T11:20:00+02:00",
+     "author": [
+      {
+       "display": "Sozialdienst"
+      }
+     ],
+     "content": [
+      {
+       "attachment": {
+        "contentType": "text/plain; charset=utf-8",
+        "title": "Sozialdienst – Entlassplanung",
+        "data": "R2VzcHLDpGNoIG1pdCBQYXRpZW50IHVuZCBTb2huIEplbnMgSGFhcyAoVGVsLiAwMTUyIDE1NTM2MDApLiBBbmdlaMO2cmlnZSB3w7xuc2NoZW4gZWluZW4gZGF1ZXJoYWZ0ZW4gUGZsZWdlaGVpbXBsYXR6LiBQRyA0LiBCZXZvcnp1Z3RlIFJlZ2lvbjogQmVybGluLUNoYXJsb3R0ZW5idXJnLiBFaW5lIEJldHJldXVuZyBiZXN0ZWh0IG5pY2h0LiBLb250YWt0IHp1ciBOYWNoYmFyaW4gRnJhdSBLYXlhLCBkaWUgYmlzaGVyIGVpbmdla2F1ZnQgaGF0Lg=="
+       }
+      }
+     ]
+    }
+   },
+   {
+    "resource": {
+     "resourceType": "DocumentReference",
+     "id": "1ee260130571-arztbrief",
+     "status": "current",
+     "type": {
+      "text": "Vorläufiger Entlassbrief"
+     },
+     "category": [
+      {
+       "text": "arztbrief"
+      }
+     ],
+     "subject": {
+      "reference": "Patient/1ee260130571"
+     },
+     "context": {
+      "encounter": [
+       {
+        "reference": "Encounter/1ee260130571"
+       }
+      ]
+     },
+     "date": "2026-10-12T08:30:00+02:00",
+     "author": [
+      {
+       "display": "Arzt"
+      }
+     ],
+     "content": [
+      {
+       "attachment": {
+        "contentType": "text/plain; charset=utf-8",
+        "title": "Vorläufiger Entlassbrief",
+        "data": "S2xpbmlrdW0gTm9yZCwgS2xpbmlrIGbDvHIgSW50ZW5zaXZtZWRpemluIC8gV2VhbmluZy4gU2VociBnZWVocnRlIEZyYXUgS29sbGVnaW4sIHNlaHIgZ2VlaHJ0ZXIgSGVyciBLb2xsZWdlLCB3aXIgYmVyaWNodGVuIMO8YmVyIEhlcnJuIEdlcmhhcmQgSGFhcywgZ2ViLiAxOC4wOC4xOTQ5LCBpbiBzdGF0aW9uw6RyZXIgQmVoYW5kbHVuZyBzZWl0IGRlbSAwNC4xMC4yMDI2LiBEaWFnbm9zZW46IFByb2xvbmdpZXJ0ZXMgV2VhbmluZyBuYWNoIHNlcHRpc2NoZW0gU2Nob2NrOyBUcmFjaGVvc3RvbWE7IENyaXRpY2FsLUlsbG5lc3MtUG9seW5ldXJvcGF0aGllLiBWZXJsYXVmIHVuZCBQcm9jZWRlcmU6IEJlbsO2dGlndCBkYXVlcmhhZnQgU2F1ZXJzdG9mZiAoMiBsL21pbikuIEludmFzaXZlIEhlaW1iZWF0bXVuZyDDvGJlciBUcmFjaGVvc3RvbWEuIEtlaW5lIERpYWx5c2VwZmxpY2h0LiBLZWluIEluc3VsaW4uIE1SU0EtQWJzdHJpY2ggbmVnYXRpdi4gTWl0IGZyZXVuZGxpY2hlbiBrb2xsZWdpYWxlbiBHcsO8w59lbiwgRHIuIG1lZC4gTm9yYSBXaWVnYW5kLCBPYmVyw6RyenRpbjsgVG9iaWFzIFJldXRlciwgU3RhdGlvbnNhcnp0Lg=="
+       }
+      }
+     ]
+    }
+   },
+   {
+    "resource": {
+     "resourceType": "DocumentReference",
+     "id": "1ee260130571-diktat",
+     "status": "current",
+     "type": {
+      "text": "Diktat Übergabe (Spracherkennung)"
+     },
+     "category": [
+      {
+       "text": "diktat"
+      }
+     ],
+     "subject": {
+      "reference": "Patient/1ee260130571"
+     },
+     "context": {
+      "encounter": [
+       {
+        "reference": "Encounter/1ee260130571"
+       }
+      ]
+     },
+     "date": "2026-10-12T07:15:00+02:00",
+     "author": [
+      {
+       "display": "Pflege"
+      }
+     ],
+     "content": [
+      {
+       "attachment": {
+        "contentType": "text/plain; charset=utf-8",
+        "title": "Diktat Übergabe (Spracherkennung)",
+        "data": "amEgYWxzbyDDvGJlcmdhYmUgaGVyciBoYWFzIMOkaCB2b2xsc3TDpG5kaWcgYmV0dGzDpGdlcmlnIHRyYW5zZmVyIG51ciBtaXQgendlaSBwZmxlZ2VrcsOkZnRlbiBtw7ZnbGljaCB6ZWl0bGljaCwgw7ZydGxpY2ggdW5kIHp1ciBwZXJzb24gb3JpZW50aWVydCBhbmdlaMO2cmlnZSBqZW5zIGhhYXMgaW5mb3JtaWVydA=="
+       }
+      }
+     ]
+    }
+   }
+  ]
+ }
+}

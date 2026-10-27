@@ -1,0 +1,38 @@
+{
+  "_comment": "The LLM egress gateway (gateway/). Every model call leaves through it: identifiers are replaced before the request goes out, a request that still contains a known identifier is refused, and each tenant may only reach the processors its data-processing agreement names. Environment variables in ${...} are expanded at start.",
+  "listen": "${CTA_GATEWAY_LISTEN:-127.0.0.1:8070}",
+  "service_tokens_env": "CTA_GATEWAY_SERVICE_TOKENS",
+  "seal_key_env": "CTA_GATEWAY_SEAL_KEY",
+  "surrogate_key_env": "CTA_GATEWAY_SURROGATE_KEY",
+  "max_body_bytes": 2000000,
+  "upstream_timeout_seconds": 90,
+  "retry": {"max_attempts": 3, "base_delay_ms": 400, "max_delay_ms": 6000},
+  "age_cap": 90,
+  "upstreams": {
+    "bedrock-eu": {
+      "kind": "bedrock",
+      "region": "eu-central-1",
+      "processor": "AWS Bedrock, Frankfurt (C5 Type 2 attested)",
+      "models": {"claude-sonnet": "eu.anthropic.claude-sonnet-4-5-20250929-v1:0", "claude-haiku": "eu.anthropic.claude-haiku-4-5-20251001-v1:0"}
+    },
+    "anthropic": {
+      "kind": "anthropic",
+      "url": "${CTA_ANTHROPIC_URL:-https://api.anthropic.com}",
+      "api_key_env": "ANTHROPIC_API_KEY",
+      "processor": "Anthropic API (outside the EU; development only)",
+      "models": {"claude-sonnet": "claude-sonnet-4-5", "claude-haiku": "claude-haiku-4-5"}
+    },
+    "sim": {
+      "kind": "generic",
+      "url": "${CTA_SIM_MODEL_URL:-http://127.0.0.1:8071}",
+      "processor": "Simulated model (tests and seasons; sees only pseudonymised text)",
+      "models": {"sim-careful": "sim-careful", "sim-hasty": "sim-hasty"}
+    }
+  },
+  "tenants": {
+    "klinikum-nord": {"upstreams": ["bedrock-eu", "sim"], "daily_token_budget": 4000000},
+    "st-elisabeth": {"upstreams": ["bedrock-eu", "sim"], "daily_token_budget": 2000000},
+    "dev": {"upstreams": ["anthropic", "sim"], "daily_token_budget": 1000000},
+    "eval": {"upstreams": ["sim", "bedrock-eu", "anthropic"], "daily_token_budget": 50000000}
+  }
+}

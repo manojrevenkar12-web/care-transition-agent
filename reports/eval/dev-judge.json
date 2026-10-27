@@ -1,0 +1,37 @@
+{
+  "eval_id": "0c03a4dd-86f5-4622-bd45-4b8af55584ad",
+  "judge": {
+    "covers_needs": {
+      "n": 60,
+      "accuracy": 0.95,
+      "kappa": 0.848,
+      "fail_recall": 0.917,
+      "fail_n": 12,
+      "trusted": true
+    },
+    "faithful": {
+      "n": 60,
+      "accuracy": 0.85,
+      "kappa": 0.392,
+      "fail_recall": 0.667,
+      "fail_n": 6,
+      "trusted": false
+    },
+    "no_identifiers": {
+      "n": 60,
+      "accuracy": 0.8,
+      "kappa": 0.04,
+      "fail_recall": 0.111,
+      "fail_n": 9,
+      "trusted": false
+    },
+    "no_advice": {
+      "n": 60,
+      "accuracy": 0.933,
+      "kappa": 0.714,
+      "fail_recall": 1.0,
+      "fail_n": 6,
+      "trusted": true
+    }
+  }
+}

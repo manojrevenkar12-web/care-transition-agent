@@ -1,0 +1,35 @@
+# Deterministic guardrails around the agent (src/cta/guardrails.py). Patterns are regular expressions on lower-cased text.
+
+# Text in a document that is addressed to an AI is data, never an instruction: it is shown to the model inside the
+# document as usual, flagged, and evidence taken from it is rejected by the verifier.
+injection:
+  - '(hinweis|anweisung|nachricht|notiz|info)\s+(für|an)\s+(die|das|den)?\s*(ki|ai|assistenz\w*|modell|system|chatbot|sprachmodell)'
+  - '^\s*(system|assistant|assistent)\s*:'
+  - '(ignorier|vergiss)\w*\s+(alle\s+)?(bisherigen|vorherigen|obigen|anderen)'
+  - 'ignore\s+(all\s+)?(previous|prior|above)'
+  - 'du\s+bist\s+(jetzt|ab\s+sofort|nun)'
+  - 'keine\s+rückfragen\s+stellen'
+  - '(immer|stets)\s+\w+\s+(angeben|eintragen)'
+
+# The agent's intended purpose is administrative: it drafts a transfer profile and answers questions about what the
+# documents say. Questions that ask for a clinical decision are out of scope (see docs/INTENDED_PURPOSE.md).
+out_of_scope:
+  - '\b(dosis|dosierung|dosieren)\b'
+  - 'wie\s*viel\s+\w*\s*(mg|milligramm|einheiten|ml)\b'
+  - '\b\d+\s?(mg|µg|ie)\b.*\?'
+  - '(soll|sollte|sollen|müssen)\s+(ich|wir|man)\b.{0,60}\b(geben|verabreichen|absetzen|erhöhen|reduzieren|behandeln|operieren|verordnen|umstellen)'
+  - '\b(diagnose|diagnostizier\w*)\b.{0,30}\b(stellen|bestimmen|vermuten|wahrscheinlich)'
+  - '\b(prognose|lebenserwartung|überlebens\w*)\b'
+  - '\b(therapie|behandlung)\w*\s*(empfehl\w*|vorschlag|vorschlagen)'
+  - 'welche[sn]?\s+(medikament|antibiotikum|therapie)'
+
+# Model output that gives clinical advice is held back for review, not shown as an answer.
+clinical_advice:
+  - '\b(wir\s+)?empfehlen\b'
+  - '\bsollte\b.{0,50}\b(erhalten|bekommen|gegeben|verabreicht|abgesetzt|behandelt)\b'
+  - '\b\d+([.,]\d+)?\s?(mg|µg|ie)\b'
+  - '\b(dosis|dosierung)\b'
+
+refusal: >-
+  Diese Frage betrifft eine ärztliche Entscheidung (Dosierung, Diagnose oder Therapie). Dafür ist der Assistent nicht
+  vorgesehen; er hilft beim Überleitungsprofil und beantwortet Fragen dazu, was in den Unterlagen steht.

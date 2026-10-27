@@ -1,0 +1,317 @@
+{
+  "set": "dev",
+  "candidate": "v2@sim-careful",
+  "metrics": {
+    "cases": 60,
+    "fields": 1140,
+    "field_accuracy": 0.974,
+    "ready_share": 0.686,
+    "ready_precision": 1.0,
+    "wrong_ready": 0,
+    "wrong_ready_rate": 0.0,
+    "major_wrong_ready": 0,
+    "wrong_values_caught": 1.0,
+    "review_load": 0.0246,
+    "silent_major_omissions": 0,
+    "creola": {
+      "omission": 21,
+      "fabrication": 1
+    },
+    "outcomes": {
+      "correct_ready": 782,
+      "correct_flagged": 6,
+      "abstain_ok": 330,
+      "omission_asked": 17,
+      "omission_missing": 4,
+      "wrong_fabrication_flagged": 1
+    },
+    "by_field": {
+      "care_type": {
+        "correct_ready": 56,
+        "abstain_ok": 3,
+        "omission_asked": 1
+      },
+      "cognition": {
+        "correct_flagged": 1,
+        "correct_ready": 55,
+        "omission_asked": 3,
+        "abstain_ok": 1
+      },
+      "dialysis": {
+        "abstain_ok": 15,
+        "correct_ready": 42,
+        "omission_asked": 2,
+        "correct_flagged": 1
+      },
+      "discharge_date": {
+        "correct_ready": 55,
+        "abstain_ok": 5
+      },
+      "insulin": {
+        "correct_ready": 38,
+        "abstain_ok": 22
+      },
+      "insurance_type": {
+        "correct_ready": 56,
+        "abstain_ok": 4
+      },
+      "interpreter": {
+        "abstain_ok": 54,
+        "correct_ready": 5,
+        "omission_missing": 1
+      },
+      "legal_representation": {
+        "abstain_ok": 15,
+        "correct_ready": 43,
+        "omission_asked": 2
+      },
+      "mobility": {
+        "correct_flagged": 1,
+        "correct_ready": 56,
+        "abstain_ok": 2,
+        "omission_asked": 1
+      },
+      "mre": {
+        "correct_ready": 53,
+        "abstain_ok": 6,
+        "omission_asked": 1
+      },
+      "oxygen": {
+        "correct_ready": 59,
+        "abstain_ok": 1
+      },
+      "peg_tube": {
+        "abstain_ok": 34,
+        "correct_ready": 25,
+        "omission_asked": 1
+      },
+      "pflegegrad": {
+        "correct_ready": 50,
+        "abstain_ok": 6,
+        "omission_asked": 2,
+        "correct_flagged": 1,
+        "wrong_fabrication_flagged": 1
+      },
+      "runaway_risk": {
+        "abstain_ok": 50,
+        "correct_ready": 9,
+        "correct_flagged": 1
+      },
+      "transfer_help": {
+        "abstain_ok": 16,
+        "correct_ready": 42,
+        "omission_asked": 2
+      },
+      "urinary_catheter": {
+        "correct_flagged": 1,
+        "correct_ready": 35,
+        "abstain_ok": 23,
+        "omission_asked": 1
+      },
+      "ventilation": {
+        "abstain_ok": 24,
+        "correct_ready": 36
+      },
+      "wish_region": {
+        "correct_ready": 30,
+        "abstain_ok": 27,
+        "omission_missing": 3
+      },
+      "wound_care": {
+        "abstain_ok": 22,
+        "correct_ready": 37,
+        "omission_asked": 1
+      }
+    },
+    "tokens_per_case": 19641.0,
+    "model_calls_per_case": 5.65,
+    "seconds_per_case": 0.22,
+    "run_status": {
+      "completed": 60
+    },
+    "summary_flagged": 0
+  },
+  "baseline": "v1@sim-careful",
+  "baseline_metrics": {
+    "cases": 60,
+    "fields": 1140,
+    "field_accuracy": 0.9691,
+    "ready_share": 0.6798,
+    "ready_precision": 1.0,
+    "wrong_ready": 0,
+    "wrong_ready_rate": 0.0,
+    "major_wrong_ready": 0,
+    "wrong_values_caught": 1.0,
+    "review_load": 0.0675,
+    "silent_major_omissions": 0,
+    "creola": {
+      "fabrication": 43,
+      "omission": 23,
+      "negation": 2
+    },
+    "outcomes": {
+      "correct_ready": 775,
+      "correct_flagged": 9,
+      "abstain_ok": 288,
+      "wrong_fabrication_flagged": 43,
+      "omission_asked": 21,
+      "wrong_negation_flagged": 2,
+      "omission_missing": 2
+    },
+    "by_field": {
+      "care_type": {
+        "correct_ready": 56,
+        "abstain_ok": 3,
+        "omission_asked": 1
+      },
+      "cognition": {
+        "correct_flagged": 1,
+        "correct_ready": 53,
+        "wrong_negation_flagged": 1,
+        "omission_asked": 4,
+        "wrong_fabrication_flagged": 1
+      },
+      "dialysis": {
+        "wrong_fabrication_flagged": 9,
+        "correct_ready": 42,
+        "abstain_ok": 6,
+        "omission_asked": 3
+      },
+      "discharge_date": {
+        "correct_ready": 55,
+        "wrong_fabrication_flagged": 4,
+        "abstain_ok": 1
+      },
+      "insulin": {
+        "correct_ready": 37,
+        "abstain_ok": 22,
+        "omission_asked": 1
+      },
+      "insurance_type": {
+        "correct_ready": 54,
+        "omission_asked": 1,
+        "wrong_fabrication_flagged": 4,
+        "correct_flagged": 1
+      },
+      "interpreter": {
+        "abstain_ok": 54,
+        "correct_ready": 5,
+        "omission_missing": 1
+      },
+      "legal_representation": {
+        "abstain_ok": 15,
+        "correct_ready": 44,
+        "correct_flagged": 1
+      },
+      "mobility": {
+        "correct_flagged": 1,
+        "correct_ready": 55,
+        "wrong_fabrication_flagged": 2,
+        "omission_asked": 2
+      },
+      "mre": {
+        "correct_ready": 53,
+        "wrong_fabrication_flagged": 4,
+        "abstain_ok": 2,
+        "omission_asked": 1
+      },
+      "oxygen": {
+        "correct_ready": 57,
+        "wrong_negation_flagged": 1,
+        "correct_flagged": 1,
+        "wrong_fabrication_flagged": 1
+      },
+      "peg_tube": {
+        "abstain_ok": 34,
+        "correct_ready": 24,
+        "omission_asked": 2
+      },
+      "pflegegrad": {
+        "correct_ready": 49,
+        "omission_asked": 4,
+        "wrong_fabrication_flagged": 6,
+        "abstain_ok": 1
+      },
+      "runaway_risk": {
+        "abstain_ok": 50,
+        "correct_ready": 9,
+        "correct_flagged": 1
+      },
+      "transfer_help": {
+        "abstain_ok": 16,
+        "correct_ready": 43,
+        "omission_asked": 1
+      },
+      "urinary_catheter": {
+        "correct_flagged": 2,
+        "correct_ready": 34,
+        "abstain_ok": 23,
+        "omission_asked": 1
+      },
+      "ventilation": {
+        "abstain_ok": 12,
+        "correct_ready": 36,
+        "wrong_fabrication_flagged": 12
+      },
+      "wish_region": {
+        "correct_ready": 31,
+        "abstain_ok": 27,
+        "correct_flagged": 1,
+        "omission_missing": 1
+      },
+      "wound_care": {
+        "abstain_ok": 22,
+        "correct_ready": 38
+      }
+    },
+    "tokens_per_case": 19756.0,
+    "model_calls_per_case": 6.37,
+    "seconds_per_case": 0.25,
+    "run_status": {
+      "completed": 60
+    },
+    "summary_flagged": 3
+  },
+  "paired_accuracy": {
+    "delta": 0.0067,
+    "low": -0.0047,
+    "high": 0.0189,
+    "n": 60
+  },
+  "gate": {
+    "passed": true,
+    "checks": [
+      {
+        "check": "no major field wrong yet ready",
+        "passed": true,
+        "value": 0
+      },
+      {
+        "check": "wrong-but-ready not more common",
+        "passed": true,
+        "value": "0.0000 vs 0.0000"
+      },
+      {
+        "check": "field accuracy not worse",
+        "passed": true,
+        "value": "+0.007 (-0.005 to +0.019)"
+      },
+      {
+        "check": "review load",
+        "passed": true,
+        "value": "0.025 vs 0.068"
+      },
+      {
+        "check": "tokens per case",
+        "passed": true,
+        "value": "19641 vs 19756"
+      },
+      {
+        "check": "no identifier reached a provider",
+        "passed": true,
+        "value": 0
+      }
+    ]
+  },
+  "eval_id": "dc62d420-0e44-4a71-9e72-3ba610c72b1b"
+}

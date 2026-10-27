@@ -1,0 +1,214 @@
+# The transfer profile (Überleitungsprofil) the agent drafts from a patient's hospital documents. It is the
+# pseudonymised profile a care-coordination platform sends to nursing homes, home-care services and rehab clinics so
+# they can accept or decline. Modelled on typical German transfer forms and the search criteria of care-coordination
+# platforms; it is not any vendor's actual schema.
+#
+# severity: major = an error could put the patient in a place that cannot care for them (isolation, oxygen,
+# ventilation, dialysis, a closed ward); minor = an error costs time or money but not safety.
+# search: the field is a hard filter in the provider search.
+# The Questionnaire (FHIR R4) is generated from this file: `cta fhir questionnaire`.
+
+version: 3
+sections:
+  - id: versorgung
+    label: {de: Versorgung, en: Care needed}
+  - id: mobilitaet
+    label: {de: Mobilität und Kognition, en: Mobility and cognition}
+  - id: behandlungspflege
+    label: {de: Behandlungspflege, en: Medical care}
+  - id: infektion
+    label: {de: Infektionen, en: Infections}
+  - id: organisatorisches
+    label: {de: Organisatorisches, en: Administration}
+  - id: zusammenfassung
+    label: {de: Kurzbeschreibung, en: Summary}
+
+fields:
+  - id: care_type
+    section: versorgung
+    label: {de: Versorgungsform, en: Type of care}
+    type: enum
+    options: [kurzzeitpflege, langzeitpflege, ambulante_pflege, geriatrische_reha, anschlussreha, hospiz]
+    required: true
+    severity: major
+    search: true
+  - id: discharge_date
+    section: versorgung
+    label: {de: Frühester Aufnahmetermin, en: Earliest admission date}
+    type: date
+    required: true
+    severity: major
+    search: true
+  - id: pflegegrad
+    section: versorgung
+    label: {de: Pflegegrad, en: Care level}
+    type: enum
+    options: [keiner, pg1, pg2, pg3, pg4, pg5, beantragt]
+    required: true
+    severity: minor
+  - id: wish_region
+    section: versorgung
+    label: {de: Wunschregion, en: Preferred region}
+    type: text
+    required: false
+    severity: minor
+    search: true
+  - id: mobility
+    section: mobilitaet
+    label: {de: Mobilität, en: Mobility}
+    type: enum
+    options: [selbststaendig, rollator, rollstuhl, bettlaegerig]
+    required: true
+    severity: major
+    search: true
+  - id: transfer_help
+    section: mobilitaet
+    label: {de: Hilfe beim Transfer, en: Transfer assistance}
+    type: enum
+    options: [keine, eine_person, zwei_personen]
+    required: false
+    severity: minor
+  - id: cognition
+    section: mobilitaet
+    label: {de: Kognition, en: Cognition}
+    type: enum
+    options: [orientiert, leicht_eingeschraenkt, demenz]
+    required: true
+    severity: major
+  - id: runaway_risk
+    section: mobilitaet
+    label: {de: Weglauftendenz, en: Risk of wandering off}
+    type: boolean
+    required: false
+    required_if: {field: cognition, equals: demenz}
+    severity: major
+    search: true
+  - id: oxygen
+    section: behandlungspflege
+    label: {de: Sauerstofftherapie, en: Oxygen therapy}
+    type: boolean
+    required: true
+    severity: major
+    search: true
+  - id: ventilation
+    section: behandlungspflege
+    label: {de: Beatmung, en: Ventilation}
+    type: enum
+    options: [keine, nicht_invasiv, invasiv]
+    required: true
+    severity: major
+    search: true
+  - id: dialysis
+    section: behandlungspflege
+    label: {de: Dialyse, en: Dialysis}
+    type: boolean
+    required: true
+    severity: major
+    search: true
+  - id: peg_tube
+    section: behandlungspflege
+    label: {de: PEG-Sonde, en: Feeding tube (PEG)}
+    type: boolean
+    required: false
+    severity: major
+    search: true
+  - id: wound_care
+    section: behandlungspflege
+    label: {de: Wundversorgung, en: Wound care}
+    type: boolean
+    required: false
+    severity: minor
+  - id: urinary_catheter
+    section: behandlungspflege
+    label: {de: Blasenkatheter, en: Urinary catheter}
+    type: boolean
+    required: false
+    severity: minor
+  - id: insulin
+    section: behandlungspflege
+    label: {de: Insulintherapie, en: Insulin therapy}
+    type: boolean
+    required: false
+    severity: minor
+  - id: mre
+    section: infektion
+    label: {de: Multiresistente Erreger, en: Multidrug-resistant organisms}
+    type: enum
+    options: [keine, mrsa, 3mrgn, 4mrgn, vre]
+    required: true
+    severity: major
+    search: true
+  - id: insurance_type
+    section: organisatorisches
+    label: {de: Versicherung, en: Insurance}
+    type: enum
+    options: [gkv, pkv]
+    required: true
+    severity: minor
+  - id: legal_representation
+    section: organisatorisches
+    label: {de: Vertretung, en: Legal representation}
+    type: enum
+    options: [keine, vorsorgevollmacht, gesetzliche_betreuung]
+    required: false
+    severity: minor
+  - id: interpreter
+    section: organisatorisches
+    label: {de: Dolmetscher, en: Interpreter}
+    type: text
+    required: false
+    severity: minor
+  - id: summary
+    section: zusammenfassung
+    label: {de: Kurzbeschreibung für Einrichtungen, en: Summary for providers}
+    type: summary
+    required: true
+    severity: major
+    max_chars: 600
+
+option_labels:
+  care_type:
+    kurzzeitpflege: {de: Kurzzeitpflege, en: Short-term care}
+    langzeitpflege: {de: Vollstationäre Pflege, en: Long-term residential care}
+    ambulante_pflege: {de: Ambulanter Pflegedienst, en: Home care}
+    geriatrische_reha: {de: Geriatrische Rehabilitation, en: Geriatric rehabilitation}
+    anschlussreha: {de: Anschlussheilbehandlung (AHB), en: Follow-up rehabilitation}
+    hospiz: {de: Hospiz, en: Hospice}
+  pflegegrad:
+    keiner: {de: Kein Pflegegrad, en: None}
+    pg1: {de: Pflegegrad 1, en: Level 1}
+    pg2: {de: Pflegegrad 2, en: Level 2}
+    pg3: {de: Pflegegrad 3, en: Level 3}
+    pg4: {de: Pflegegrad 4, en: Level 4}
+    pg5: {de: Pflegegrad 5, en: Level 5}
+    beantragt: {de: Beantragt, en: Applied for}
+  mobility:
+    selbststaendig: {de: Selbstständig mobil, en: Independent}
+    rollator: {de: Mit Rollator, en: With a walker}
+    rollstuhl: {de: Rollstuhl, en: Wheelchair}
+    bettlaegerig: {de: Bettlägerig, en: Bedridden}
+  transfer_help:
+    keine: {de: Keine, en: None}
+    eine_person: {de: Eine Pflegeperson, en: One carer}
+    zwei_personen: {de: Zwei Pflegepersonen, en: Two carers}
+  cognition:
+    orientiert: {de: Orientiert, en: Oriented}
+    leicht_eingeschraenkt: {de: Leicht eingeschränkt, en: Mildly impaired}
+    demenz: {de: Demenz, en: Dementia}
+  ventilation:
+    keine: {de: Keine, en: None}
+    nicht_invasiv: {de: Nicht-invasiv (NIV), en: Non-invasive}
+    invasiv: {de: Invasiv (Tracheostoma), en: Invasive (tracheostomy)}
+  mre:
+    keine: {de: Keine, en: None}
+    mrsa: {de: MRSA, en: MRSA}
+    3mrgn: {de: 3MRGN, en: 3MRGN}
+    4mrgn: {de: 4MRGN, en: 4MRGN}
+    vre: {de: VRE, en: VRE}
+  insurance_type:
+    gkv: {de: Gesetzlich, en: Statutory}
+    pkv: {de: Privat, en: Private}
+  legal_representation:
+    keine: {de: Keine, en: None}
+    vorsorgevollmacht: {de: Vorsorgevollmacht, en: Power of attorney}
+    gesetzliche_betreuung: {de: Gesetzliche Betreuung, en: Court-appointed guardian}
