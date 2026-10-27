@@ -1,0 +1,68 @@
+# A complete local system: PostgreSQL, the simulated model, the egress gateway, the platform and its console, and the
+# observability stack (OpenTelemetry collector, Jaeger for traces, Prometheus, Grafana). Keys here are for local use.
+#   docker compose up --build    then open http://localhost:8000 (token demo-clinician) and http://localhost:3000
+name: care-transition-agent
+
+x-keys: &keys
+  CTA_GATEWAY_SEAL_KEY: c2VhbC1rZXktZm9yLWxvY2FsLWRldmVsb3BtZW50LW9ubHk=
+  CTA_GATEWAY_SURROGATE_KEY: c3Vycm9nYXRlLWtleS1mb3ItbG9jYWwtZGV2ZWxvcG1lbnQ=
+  CTA_GATEWAY_SERVICE_TOKENS: local-service-token
+
+services:
+  postgres:
+    image: postgres:16.6-alpine
+    environment: {POSTGRES_USER: cta, POSTGRES_PASSWORD: cta, POSTGRES_DB: cta}
+    volumes: [pgdata:/var/lib/postgresql/data]
+    healthcheck: {test: ["CMD", "pg_isready", "-U", "cta"], interval: 5s, retries: 20}
+
+  sim:
+    build: {context: ., dockerfile: deploy/docker/sim.Dockerfile}
+
+  gateway:
+    build: {context: ., dockerfile: deploy/docker/gateway.Dockerfile}
+    environment:
+      <<: *keys
+      CTA_GATEWAY_LISTEN: 0.0.0.0:8070
+      CTA_SIM_MODEL_URL: http://sim:8071
+    depends_on: [sim]
+
+  agent:
+    build: {context: ., dockerfile: deploy/docker/agent.Dockerfile}
+    command: ["sh", "-c", "cta migrate && cta serve --host 0.0.0.0 --port 8000"]
+    environment:
+      CTA_DATABASE_URL: postgresql://cta:cta@postgres:5432/cta
+      CTA_GATEWAY_URL: http://gateway:8070
+      CTA_GATEWAY_TOKEN: local-service-token
+      CTA_KEYRING: '{"klinikum-nord":"a2xpbmlrdW0tbm9yZC1sb2NhbC1rZXktMzItYnl0ZXM=","st-elisabeth":"c3QtZWxpc2FiZXRoLWxvY2FsLWtleS0zMi1ieXRlcyE=","dev":"ZGV2LWxvY2FsLWtleS1vbmx5LTMyLWJ5dGVzLWxvbmc=","eval":"ZXZhbC1sb2NhbC1rZXktb25seS0zMi1ieXRlcy1sb25n"}'
+      CTA_API_TOKENS: '{"demo-clinician":{"user":"dr.weber","tenant":"klinikum-nord","role":"clinician"},"demo-coordinator":{"user":"sozialdienst.kaya","tenant":"klinikum-nord","role":"coordinator"},"demo-quality":{"user":"ki-team","tenant":"klinikum-nord","role":"quality"}}'
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
+      OTEL_SERVICE_NAME: cta-agent
+    ports: ["8000:8000"]
+    depends_on:
+      postgres: {condition: service_healthy}
+      gateway: {condition: service_started}
+
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.115.1
+    command: ["--config=/etc/otel/config.yaml"]
+    volumes: [./deploy/otel-collector.yaml:/etc/otel/config.yaml:ro]
+
+  jaeger:
+    image: jaegertracing/all-in-one:1.64.0
+    ports: ["16686:16686"]
+
+  prometheus:
+    image: prom/prometheus:v3.0.1
+    volumes: [./deploy/prometheus.yml:/etc/prometheus/prometheus.yml:ro]
+    ports: ["9090:9090"]
+
+  grafana:
+    image: grafana/grafana:11.4.0
+    environment: {GF_AUTH_ANONYMOUS_ENABLED: "true", GF_AUTH_ANONYMOUS_ORG_ROLE: Viewer}
+    volumes:
+      - ./deploy/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./deploy/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    ports: ["3000:3000"]
+
+volumes:
+  pgdata:

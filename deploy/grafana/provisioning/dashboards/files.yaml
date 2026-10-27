@@ -1,0 +1,3 @@
+apiVersion: 1
+providers:
+  - {name: cta, folder: Care transition, type: file, options: {path: /var/lib/grafana/dashboards}}

@@ -1,0 +1,7 @@
+global: {scrape_interval: 15s}
+scrape_configs:
+  - job_name: cta-agent
+    static_configs: [{targets: ["agent:8000"]}]
+  - job_name: cta-gateway
+    metrics_path: /metrics
+    static_configs: [{targets: ["gateway:8070"]}]

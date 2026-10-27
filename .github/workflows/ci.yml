@@ -1,0 +1,148 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  PYTHON_VERSION: "3.12"
+  GO_VERSION: "1.24.7"
+  NODE_VERSION: "22"
+
+jobs:
+  gateway:
+    name: gateway (Go)
+    runs-on: ubuntu-latest
+    defaults: {run: {working-directory: gateway}}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with: {go-version: "${{ env.GO_VERSION }}", cache-dependency-path: gateway/go.mod}
+      - run: test -z "$(gofmt -l .)" || (gofmt -l . && exit 1)
+      - run: go vet ./...
+      - run: go test -race -count=1 ./...
+
+  platform:
+    name: platform (Python, PostgreSQL, real gateway)
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env: {POSTGRES_PASSWORD: postgres}
+        ports: ["5432:5432"]
+        options: --health-cmd pg_isready --health-interval 5s --health-retries 20
+    env:
+      CTA_TEST_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/postgres
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "${{ env.PYTHON_VERSION }}", cache: pip}
+      - uses: actions/setup-go@v5
+        with: {go-version: "${{ env.GO_VERSION }}", cache-dependency-path: gateway/go.mod}
+      - run: pip install -e ".[dev]"
+      - run: ruff check src tests
+      - run: ruff format --check src tests
+      - run: mypy src
+      - run: pytest -q
+
+  console:
+    name: console (TypeScript)
+    runs-on: ubuntu-latest
+    defaults: {run: {working-directory: web}}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: "${{ env.NODE_VERSION }}", cache: npm, cache-dependency-path: web/package-lock.json}
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
+
+  e2e:
+    name: end-to-end (Playwright against the real stack)
+    runs-on: ubuntu-latest
+    needs: [gateway, platform, console]
+    services:
+      postgres:
+        image: postgres:16
+        env: {POSTGRES_PASSWORD: postgres}
+        ports: ["5432:5432"]
+        options: --health-cmd pg_isready --health-interval 5s --health-retries 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "${{ env.PYTHON_VERSION }}", cache: pip}
+      - uses: actions/setup-go@v5
+        with: {go-version: "${{ env.GO_VERSION }}", cache-dependency-path: gateway/go.mod}
+      - uses: actions/setup-node@v4
+        with: {node-version: "${{ env.NODE_VERSION }}", cache: npm, cache-dependency-path: web/package-lock.json}
+      - run: pip install -e ".[dev]"
+      - run: npm ci && npx playwright install --with-deps chromium
+        working-directory: web
+      - run: scripts/e2e.sh
+        env: {CTA_E2E_ADMIN_URL: "postgresql://postgres:postgres@localhost:5432/postgres"}
+      - if: failure()
+        run: cat /tmp/cta-e2e.log || true
+
+  evaluation-gate:
+    name: evaluation gate (golden set, candidate vs production prompt)
+    runs-on: ubuntu-latest
+    needs: [platform]
+    services:
+      postgres:
+        image: postgres:16
+        env: {POSTGRES_PASSWORD: postgres}
+        ports: ["5432:5432"]
+        options: --health-cmd pg_isready --health-interval 5s --health-retries 20
+    env:
+      CTA_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/postgres
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "${{ env.PYTHON_VERSION }}", cache: pip}
+      - uses: actions/setup-go@v5
+        with: {go-version: "${{ env.GO_VERSION }}", cache-dependency-path: gateway/go.mod}
+      - run: pip install -e .
+      - name: v2 must not be worse than v1 on the golden set (exits 1 if the gate fails)
+        run: cta eval offline --set dev --candidate v2@sim-careful --baseline v1@sim-careful --local-stack --out gate.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: {name: evaluation-gate, path: gate.json}
+
+  held-out:
+    name: held-out first runs are unchanged
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: sha256sum -c heldout/first_run.sha256
+
+  terraform:
+    name: terraform (AWS, eu-central-1)
+    runs-on: ubuntu-latest
+    defaults: {run: {working-directory: deploy/terraform}}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+        with: {terraform_version: "1.9.8"}
+      - run: terraform fmt -recursive -diff
+      - run: terraform init -backend=false
+      - run: terraform validate
+
+  images:
+    name: container images
+    runs-on: ubuntu-latest
+    needs: [gateway, platform, console]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - run: docker build -f deploy/docker/gateway.Dockerfile -t cta-gateway .
+      - run: docker build -f deploy/docker/agent.Dockerfile -t cta-agent .
+      - run: docker build -f deploy/docker/sim.Dockerfile -t cta-sim .
